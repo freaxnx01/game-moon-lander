@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+html,body{margin:0;padding:0;height:100%;background:#03070C;overflow:hidden;font-family:'Jost',sans-serif;color:#E9F2F9;}
+a{color:#2FE6A6;text-decoration:none;}
+a:hover{color:#D9A544;}
+@keyframes ml-blink{0%,100%{opacity:1}50%{opacity:.25}}
+</style>
+</helmet>
+
+<div ref="{{ rootRef }}" style="position:fixed;inset:0;display:flex;align-items:center;justify-content:center;overflow:hidden;background:#03070C;">
+  <div data-screen-label="Prototype — flight view" style="position:relative;width:1280px;height:720px;flex:none;transform:{{ stageT }};background:linear-gradient(180deg,#081420 0%,#0E2133 58%,#143049 100%);border:1px solid #2C4E6B;overflow:hidden;">
+    <canvas ref="{{ canvasRef }}" width="1280" height="720" style="position:absolute;left:0;top:0;width:1280px;height:720px;"></canvas>
+
+    <div style="position:absolute;left:20px;top:20px;width:252px;background:rgba(6,16,27,0.78);border:1px solid #2C4E6B;padding:12px 14px;">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;">
+        <span style="font:600 11px 'Jost',sans-serif;letter-spacing:.18em;color:#8FB0C9;">FUEL</span>
+        <span style="font:600 20px 'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums;color:{{ fuelValC }};">{{ fuel }}%</span>
+      </div>
+      <div style="position:relative;height:12px;border:1px solid rgba(233,242,249,.35);margin-top:6px;">
+        <div style="position:absolute;left:0;top:0;bottom:0;width:{{ fuel }}%;background:{{ fuelBarC }};"></div>
+        <div style="position:absolute;left:25%;top:-3px;bottom:-3px;width:2px;background:#FFB020;"></div>
+        <div style="position:absolute;left:50%;top:0;bottom:0;width:1px;background:rgba(44,78,107,.9);"></div>
+        <div style="position:absolute;left:75%;top:0;bottom:0;width:1px;background:rgba(44,78,107,.9);"></div>
+      </div>
+      <div style="font:400 10px 'IBM Plex Mono',monospace;color:#8FB0C9;margin-top:4px;">CAUTION TICK 25% → AMBER · 10% → RED</div>
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-top:12px;">
+        <span style="font:600 11px 'Jost',sans-serif;letter-spacing:.18em;color:#8FB0C9;">THRUST</span>
+        <span style="font:600 20px 'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums;color:{{ thrColor }};">{{ thr }}%</span>
+      </div>
+      <div style="display:flex;gap:3px;margin-top:6px;">
+        <sc-for list="{{ thrSegs }}" as="seg" hint-placeholder-count="10">
+          <div style="flex:1;height:10px;border:1px solid {{ seg.bc }};background:{{ seg.bg }};"></div>
+        </sc-for>
+      </div>
+    </div>
+
+    <div style="position:absolute;left:50%;top:20px;transform:translateX(-50%);text-align:center;background:rgba(6,16,27,0.78);border:1px solid #2C4E6B;padding:10px 22px;">
+      <div style="font:600 10px 'Jost',sans-serif;letter-spacing:.24em;color:#8FB0C9;">SCORE</div>
+      <div style="font:600 24px 'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums;color:#D9A544;letter-spacing:.06em;">{{ score }}</div>
+      <div style="font:400 11px 'IBM Plex Mono',monospace;color:#8FB0C9;margin-top:2px;">T+ {{ clock }}</div>
+    </div>
+
+    <div style="position:absolute;right:20px;top:20px;width:312px;background:rgba(6,16,27,0.78);border:1px solid #2C4E6B;padding:12px 14px;">
+      <div style="display:grid;grid-template-columns:44px 1fr 118px;gap:4px 10px;align-items:center;">
+        <span style="font:600 11px 'Jost',sans-serif;letter-spacing:.14em;color:#8FB0C9;">ALT</span>
+        <span style="font:600 21px 'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums;text-align:right;">{{ alt }} <span style="font-size:12px;color:#8FB0C9;">M</span></span>
+        <span style="font:400 10px 'IBM Plex Mono',monospace;color:#8FB0C9;text-align:right;">AGL</span>
+        <span style="font:600 11px 'Jost',sans-serif;letter-spacing:.14em;color:#8FB0C9;">V/S</span>
+        <span style="font:600 21px 'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums;text-align:right;color:{{ vsValC }};">{{ vs }} <span style="font-size:12px;color:#8FB0C9;">M/S</span></span>
+        <span style="font:600 10.5px 'IBM Plex Mono',monospace;color:{{ vsChip.c }};border:1px solid {{ vsChip.c }};background:{{ vsChip.bg }};padding:2px 6px;text-align:center;">{{ vsChip.g }} MAX 2.5</span>
+        <span style="font:600 11px 'Jost',sans-serif;letter-spacing:.14em;color:#8FB0C9;">H/S</span>
+        <span style="font:600 21px 'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums;text-align:right;color:{{ hsValC }};">{{ hs }} <span style="font-size:12px;color:#8FB0C9;">M/S</span></span>
+        <span style="font:600 10.5px 'IBM Plex Mono',monospace;color:{{ hsChip.c }};border:1px solid {{ hsChip.c }};background:{{ hsChip.bg }};padding:2px 6px;text-align:center;">{{ hsChip.g }} MAX 1.5</span>
+        <span style="font:600 11px 'Jost',sans-serif;letter-spacing:.14em;color:#8FB0C9;">TILT</span>
+        <span style="font:600 21px 'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums;text-align:right;color:{{ tiltValC }};">{{ tilt }}°</span>
+        <span style="font:600 10.5px 'IBM Plex Mono',monospace;color:{{ tiltChip.c }};border:1px solid {{ tiltChip.c }};background:{{ tiltChip.bg }};padding:2px 6px;text-align:center;">{{ tiltChip.g }} MAX 8°</span>
+      </div>
+      <div style="margin-top:10px;border:1px solid {{ annC }};background:{{ annBg }};padding:6px 10px;text-align:center;font:600 12px 'IBM Plex Mono',monospace;letter-spacing:.12em;color:{{ annC }};">{{ annT }}</div>
+    </div>
+
+    <div style="position:absolute;left:20px;bottom:16px;display:flex;align-items:center;gap:14px;background:rgba(6,16,27,0.78);border:1px solid #2C4E6B;padding:7px 12px;">
+      <span style="font:500 11px 'IBM Plex Mono',monospace;color:#8FB0C9;">SITE: {{ siteName }}</span>
+      <span style="font:500 11px 'IBM Plex Mono',monospace;color:#8FB0C9;">CRAFT <span style="color:#E9F2F9;">{{ shipsStr }}</span></span>
+    </div>
+    <div style="position:absolute;right:20px;bottom:16px;background:rgba(6,16,27,0.78);border:1px solid #2C4E6B;padding:7px 12px;font:400 11px 'IBM Plex Mono',monospace;color:#8FB0C9;">← → RCS&nbsp;&nbsp;·&nbsp;&nbsp;↑ / SPACE ENGINE&nbsp;&nbsp;·&nbsp;&nbsp;R RE-FLY</div>
+
+    <sc-if value="{{ showReady }}" hint-placeholder-val="{{ true }}">
+      <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(5,11,18,.55);">
+        <div style="width:440px;background:rgba(6,16,27,0.94);border:1.5px solid #2C4E6B;box-shadow:inset 0 0 0 4px rgba(6,16,27,1),inset 0 0 0 5px rgba(44,78,107,.6);padding:26px 30px;text-align:center;">
+          <div style="font:500 10px 'IBM Plex Mono',monospace;letter-spacing:.28em;color:#8FB0C9;">FLIGHT MANUAL BUILD 0.1</div>
+          <div style="font:700 34px 'Jost',sans-serif;letter-spacing:.12em;margin-top:6px;">MOON LANDER</div>
+          <div style="font:400 12px 'IBM Plex Mono',monospace;color:#D9A544;margin-top:4px;">SITE: {{ siteName }} · PAD ×1 / PAD ×3</div>
+          <div style="border:1px dashed #2C4E6B;padding:10px 12px;margin-top:18px;font:400 11.5px/1.8 'IBM Plex Mono',monospace;color:#C6D6E2;text-align:left;">← → &nbsp;RCS ROTATE&nbsp;&nbsp;·&nbsp;&nbsp;TILT ≤ 8°<br>↑ / SPACE &nbsp;MAIN ENGINE&nbsp;&nbsp;·&nbsp;&nbsp;V/S ≤ 2.5 · H/S ≤ 1.5<br>LAND ON A TEAL OR GOLD PAD — ANYWHERE ELSE IS ROCK</div>
+          <div style="font:600 12px 'IBM Plex Mono',monospace;letter-spacing:.18em;color:#2FE6A6;margin-top:18px;animation:ml-blink 1.4s infinite;">PRESS ANY KEY TO START</div>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ showSuccess }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute;left:50%;top:64px;transform:translateX(-50%);width:400px;background:rgba(6,16,27,0.93);border:1.5px solid #2FE6A6;box-shadow:inset 0 0 0 4px rgba(6,16,27,1),inset 0 0 0 5px rgba(47,230,166,.35);padding:20px 24px;">
+        <div style="position:absolute;right:14px;top:12px;border:1.5px solid #2FE6A6;color:#2FE6A6;font:600 10.5px 'IBM Plex Mono',monospace;letter-spacing:.14em;padding:3px 8px;transform:rotate(-7deg);opacity:.85;">NOMINAL</div>
+        <div style="font:700 19px 'Jost',sans-serif;letter-spacing:.14em;color:#2FE6A6;">TOUCHDOWN CONFIRMED</div>
+        <div style="font:400 11px 'IBM Plex Mono',monospace;color:#8FB0C9;margin:3px 0 14px;">SITE: {{ siteName }} · {{ tdPad }} · T+ {{ tdClock }}</div>
+        <div style="display:grid;grid-template-columns:1fr auto auto;gap:5px 14px;font:500 13px 'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums;">
+          <span style="color:#8FB0C9;">V/S AT CONTACT</span><span style="text-align:right;">{{ tdVs }} M/S</span><span style="color:#2FE6A6;">● PASS</span>
+          <span style="color:#8FB0C9;">TILT AT CONTACT</span><span style="text-align:right;">{{ tdTilt }}°</span><span style="color:#2FE6A6;">● PASS</span>
+          <span style="color:#8FB0C9;">FUEL REMAINING</span><span style="text-align:right;">{{ tdFuel }}%</span><span style="color:#8FB0C9;">→ BONUS</span>
+        </div>
+        <div style="height:1px;background:rgba(233,242,249,.15);margin:13px 0;"></div>
+        <div style="display:grid;grid-template-columns:1fr auto;gap:5px 14px;font:500 13px 'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums;">
+          <span style="color:#8FB0C9;">BASE LANDING</span><span style="text-align:right;">1 000</span>
+          <span style="color:#8FB0C9;">PAD MULTIPLIER ×{{ tdMult }}</span><span style="text-align:right;">{{ tdMultPts }}</span>
+          <span style="color:#8FB0C9;">FUEL BONUS {{ tdFuel }}% × 20</span><span style="text-align:right;">+ {{ tdBonus }}</span>
+          <span style="color:#D9A544;font-weight:600;">TOTAL</span><span style="text-align:right;color:#D9A544;font-weight:600;font-size:16px;">{{ tdTotal }}</span>
+        </div>
+        <div style="font:500 11px 'Jost',sans-serif;letter-spacing:.16em;color:#8FB0C9;margin-top:14px;">ENTER — NEXT SITE&nbsp;&nbsp;·&nbsp;&nbsp;R — RE-FLY</div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ showCrash }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute;left:50%;top:64px;transform:translateX(-50%);width:400px;background:rgba(6,16,27,0.93);border:1.5px solid #FF4D5E;box-shadow:inset 0 0 0 4px rgba(6,16,27,1),inset 0 0 0 5px rgba(255,77,94,.3);padding:20px 24px;">
+        <div style="position:absolute;right:14px;top:12px;border:1.5px solid #FF4D5E;color:#FF4D5E;font:600 10.5px 'IBM Plex Mono',monospace;letter-spacing:.14em;padding:3px 8px;transform:rotate(-7deg);opacity:.85;">MISHAP RPT</div>
+        <div style="font:700 19px 'Jost',sans-serif;letter-spacing:.14em;color:#FF4D5E;">VEHICLE LOST</div>
+        <div style="font:400 11px 'IBM Plex Mono',monospace;color:#8FB0C9;margin:3px 0 14px;">TELEMETRY ENDS T+ {{ crClock }} · SITE: {{ siteName }}</div>
+        <div style="display:grid;grid-template-columns:1fr auto auto;gap:5px 14px;font:500 13px 'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums;">
+          <span style="color:#8FB0C9;">IMPACT VELOCITY</span><span style="text-align:right;color:#FF4D5E;">{{ crVs }} M/S</span><span style="color:#FF4D5E;">✕ MAX 2.5</span>
+          <span style="color:#8FB0C9;">TILT AT IMPACT</span><span style="text-align:right;color:{{ crTiltC }};">{{ crTilt }}°</span><span style="color:{{ crTiltC }};">MAX 8°</span>
+          <span style="color:#8FB0C9;">CAUSE</span><span style="text-align:right;grid-column:span 2;">{{ crCause }}</span>
+        </div>
+        <div style="height:1px;background:rgba(233,242,249,.15);margin:13px 0;"></div>
+        <div style="display:grid;grid-template-columns:1fr auto;gap:5px 14px;font:500 13px 'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums;">
+          <span style="color:#8FB0C9;">SCORE RETAINED</span><span style="text-align:right;">{{ crScore }}</span>
+          <span style="color:#8FB0C9;">CRAFT REMAINING</span><span style="text-align:right;">{{ crShips }}</span>
+        </div>
+        <div style="font:500 11px 'Jost',sans-serif;letter-spacing:.16em;color:#8FB0C9;margin-top:14px;">{{ crFooter }}</div>
+      </div>
+    </sc-if>
+
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{
+  &quot;gravity&quot;: {&quot;editor&quot;: &quot;range&quot;, &quot;default&quot;: 1.62, &quot;min&quot;: 0.5, &quot;max&quot;: 6, &quot;step&quot;: 0.02, &quot;unit&quot;: &quot;m/s²&quot;, &quot;tsType&quot;: &quot;number&quot;, &quot;section&quot;: &quot;Flight model&quot;},
+  &quot;enginePower&quot;: {&quot;editor&quot;: &quot;range&quot;, &quot;default&quot;: 1, &quot;min&quot;: 0.5, &quot;max&quot;: 2.5, &quot;step&quot;: 0.05, &quot;unit&quot;: &quot;×&quot;, &quot;tsType&quot;: &quot;number&quot;, &quot;section&quot;: &quot;Flight model&quot;},
+  &quot;startFuel&quot;: {&quot;editor&quot;: &quot;int&quot;, &quot;default&quot;: 60, &quot;min&quot;: 20, &quot;max&quot;: 100, &quot;tsType&quot;: &quot;number&quot;, &quot;section&quot;: &quot;Flight model&quot;},
+  &quot;showPath&quot;: {&quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: true, &quot;tsType&quot;: &quot;boolean&quot;, &quot;section&quot;: &quot;Overlays&quot;},
+  &quot;showGrid&quot;: {&quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: true, &quot;tsType&quot;: &quot;boolean&quot;, &quot;section&quot;: &quot;Overlays&quot;}
+}">
+class Component extends DCLogic {
+  state = { tick: 0 };
+  canvasRef = React.createRef();
+  rootRef = React.createRef();
+
+  // ---------- lifecycle ----------
+  componentDidMount() {
+    this.keys = {};
+    this.scale = 1;
+    this.g = { score: 0, ships: 3, siteIndex: 1, seed: 7, phase: 'ready' };
+    this.newSite(this.g.seed);
+    this.onResize = () => { this.fit(); };
+    window.addEventListener('resize', this.onResize);
+    this.fit();
+    this.onKeyDown = (e) => this.keyDown(e);
+    this.onKeyUp = (e) => { this.keys[e.key] = false; };
+    window.addEventListener('keydown', this.onKeyDown);
+    window.addEventListener('keyup', this.onKeyUp);
+    this._last = performance.now();
+    this._hudAcc = 0;
+    const loop = (now) => {
+      this._raf = requestAnimationFrame(loop);
+      const dt = Math.min((now - this._last) / 1000, 0.04);
+      this._last = now;
+      this.step(dt);
+      this.draw(now / 1000);
+      this._hudAcc += dt;
+      if (this._hudAcc > 1 / 20) { this._hudAcc = 0; this.setState({ tick: this.state.tick + 1 }); }
+    };
+    this._raf = requestAnimationFrame(loop);
+  }
+
+  componentWillUnmount() {
+    cancelAnimationFrame(this._raf);
+    window.removeEventListener('resize', this.onResize);
+    window.removeEventListener('keydown', this.onKeyDown);
+    window.removeEventListener('keyup', this.onKeyUp);
+  }
+
+  fit() {
+    const el = this.rootRef.current;
+    if (!el) return;
+    const s = Math.min(el.clientWidth / 1300, el.clientHeight / 740);
+    if (Math.abs(s - this.scale) > 0.005) { this.scale = s; this.setState({ tick: this.state.tick + 1 }); }
+  }
+
+  // ---------- input ----------
+  keyDown(e) {
+    const nav = ['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', ' '];
+    if (nav.includes(e.key)) e.preventDefault();
+    const g = this.g;
+    if (g.phase === 'ready') { g.phase = 'flying'; return; }
+    this.keys[e.key] = true;
+    if ((e.key === 'r' || e.key === 'R') && (g.phase === 'landed' || g.phase === 'crashed') && g.ships > 0) {
+      this.resetCraft();
+      g.phase = 'flying';
+    }
+    if (e.key === 'Enter') {
+      if (g.phase === 'landed') {
+        g.siteIndex += 1; g.seed = g.seed * 3 + 11;
+        this.newSite(g.seed); this.resetCraft(); g.phase = 'flying';
+      } else if (g.phase === 'crashed' && g.ships <= 0) {
+        this.g = { score: 0, ships: 3, siteIndex: 1, seed: 7, phase: 'ready' };
+        this.newSite(this.g.seed);
+      }
+    }
+  }
+
+  // ---------- world gen ----------
+  rng(seed) { let a = seed >>> 0 || 1; return () => { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+
+  newSite(seed) {
+    const r = this.rng(seed * 1000 + 17);
+    const pts = [];
+    const n = 21; // every 64 px
+    let y = 470 + r() * 80;
+    for (let i = 0; i <= n; i++) {
+      y += (r() - 0.5) * 150;
+      y = Math.max(390, Math.min(650, y));
+      pts.push({ x: i * 64, y: y });
+    }
+    // carve two pads: wide x1 in left 2/3, narrow x3 in right half (different cell)
+    const padCell1 = 2 + Math.floor(r() * 8);           // cells 2..9
+    let padCell2 = 12 + Math.floor(r() * 6);            // cells 12..17
+    const pad1Y = Math.max(430, Math.min(640, pts[padCell1].y));
+    const pad2Y = Math.max(410, Math.min(600, pts[padCell2].y - 30 - r() * 40));
+    const flatten = (c, span, yy) => { for (let i = c; i <= c + span; i++) pts[i].y = yy; };
+    flatten(padCell1, 3, pad1Y);   // 192 px wide
+    flatten(padCell2, 2, pad2Y);   // 128 px wide
+    this.terrain = pts;
+    this.pads = [
+      { x0: padCell1 * 64, x1: (padCell1 + 3) * 64, y: pad1Y, mult: 1 },
+      { x0: padCell2 * 64, x1: (padCell2 + 2) * 64, y: pad2Y, mult: 3 }
+    ];
+    // stars
+    const sr = this.rng(seed * 77 + 3);
+    this.stars = [];
+    for (let i = 0; i < 46; i++) this.stars.push({ x: sr() * 1280, y: sr() * 330, r: 0.7 + sr() * 0.7, o: 0.25 + sr() * 0.4 });
+    const names = ['MARE SERENITATIS', 'OCEANUS PROCELLARUM', 'SINUS IRIDUM', 'MARE IMBRIUM', 'TYCHO RIM', 'MARE CRISIUM', 'VALLIS ALPES', 'MARE NUBIUM'];
+    this.siteName = names[(this.g.siteIndex - 1) % names.length];
+    this.particles = [];
+    this.debris = [];
+    this.resetCraft();
+  }
+
+  resetCraft() {
+    const P = this.params();
+    this.c = {
+      x: 180, y: 120, vx: 42, vy: 0, rot: 0, thr: 0,
+      fuel: P.startFuel, t: 0, ring: 0
+    };
+    this.particles = [];
+    this.debris = [];
+    this.crashInfo = null;
+    this.landInfo = null;
+  }
+
+  params() {
+    return {
+      gravity: this.props.gravity ?? 1.62,
+      engine: (this.props.enginePower ?? 1) * 4.4,
+      startFuel: this.props.startFuel ?? 60,
+      showPath: this.props.showPath ?? true,
+      showGrid: this.props.showGrid ?? true
+    };
+  }
+
+  groundY(x) {
+    const pts = this.terrain;
+    x = Math.max(0, Math.min(1279.9, x));
+    const i = Math.min(pts.length - 2, Math.floor(x / 64));
+    const a = pts[i], b = pts[i + 1];
+    const u = (x - a.x) / (b.x - a.x);
+    return a.y + (b.y - a.y) * u;
+  }
+
+  padAt(x) { return this.pads.find(p => x >= p.x0 && x <= p.x1) || null; }
+
+  // ---------- physics ----------
+  PXPM = 3.6;
+
+  step(dt) {
+    const g = this.g, c = this.c, P = this.params();
+    // particles always update
+    this.particles = this.particles.filter(p => (p.life -= dt) > 0);
+    this.particles.forEach(p => { p.x += p.vx * dt; p.y += p.vy * dt; p.vy += 60 * dt; });
+    this.debris.forEach(d => {
+      if (d.rest) return;
+      d.x += d.vx * dt; d.y += d.vy * dt; d.vy += P.gravity * this.PXPM * 3 * dt; d.a += d.va * dt;
+      const gy = this.groundY(d.x);
+      if (d.y > gy - 3) { d.y = gy - 3; d.rest = true; }
+    });
+    if (c.ring > 0) c.ring = Math.max(0, c.ring - dt);
+    if (g.phase !== 'flying') return;
+
+    c.t += dt;
+    // rotation
+    const rate = 95;
+    if (this.keys['ArrowLeft']) c.rot -= rate * dt;
+    if (this.keys['ArrowRight']) c.rot += rate * dt;
+    c.rot = Math.max(-90, Math.min(90, c.rot));
+    // throttle ramp
+    const burning = (this.keys['ArrowUp'] || this.keys[' ']) && c.fuel > 0;
+    c.thr = burning ? Math.min(1, c.thr + 3 * dt) : Math.max(0, c.thr - 6 * dt);
+    if (c.thr > 0 && c.fuel > 0) {
+      c.fuel = Math.max(0, c.fuel - c.thr * 6.4 * dt);
+      const rad = c.rot * Math.PI / 180;
+      const acc = P.engine * this.PXPM * c.thr;
+      c.vx += Math.sin(rad) * acc * dt;
+      c.vy -= Math.cos(rad) * acc * dt;
+      // exhaust dust when near ground
+      const agl = this.groundY(c.x) - c.y;
+      if (agl < 110 && Math.random() < c.thr * 0.9) {
+        const gy = this.groundY(c.x + (Math.random() - 0.5) * 30);
+        this.particles.push({ x: c.x + (Math.random() - 0.5) * 36, y: gy - 2, vx: (Math.random() - 0.5) * 90, vy: -20 - Math.random() * 45, life: 0.4 + Math.random() * 0.25, c: Math.random() < 0.5 ? '#8FB0C9' : '#C6D6E2' });
+      }
+    }
+    c.vy += P.gravity * this.PXPM * dt;
+    c.x += c.vx * dt; c.y += c.vy * dt;
+    if (c.x < -20) c.x = 1300; if (c.x > 1300) c.x = -20;
+    if (c.y < 30) { c.y = 30; c.vy = Math.max(0, c.vy); }
+
+    // contact check via leg feet
+    const s = 1.35, rad = c.rot * Math.PI / 180;
+    const cos = Math.cos(rad), sin = Math.sin(rad);
+    const feet = [[-29, 25], [29, 25]].map(f => ({
+      x: c.x + (f[0] * cos - f[1] * sin) * s,
+      y: c.y + (f[0] * sin + f[1] * cos) * s
+    }));
+    const hit = feet.some(f => f.y >= this.groundY(f.x)) || c.y >= this.groundY(c.x) - 8;
+    if (!hit) return;
+
+    const vs = c.vy / this.PXPM;              // + down, m/s
+    const hs = c.vx / this.PXPM;
+    const tilt = Math.abs(c.rot);
+    const pad = this.padAt(feet[0].x) && this.padAt(feet[1].x) &&
+                this.padAt(feet[0].x) === this.padAt(feet[1].x) ? this.padAt(c.x) : null;
+    const ok = pad && vs <= 2.5 && Math.abs(hs) <= 1.5 && tilt <= 8;
+    if (ok) this.land(pad, vs, tilt);
+    else this.crash(pad, vs, hs, tilt);
+  }
+
+  land(pad, vs, tilt) {
+    const g = this.g, c = this.c;
+    g.phase = 'landed';
+    c.y = pad.y - 25 * 1.35; c.vy = 0; c.vx = 0; c.thr = 0; c.rot = 0; c.ring = 3;
+    const base = 1000, multPts = base * (pad.mult - 1), bonus = Math.round(c.fuel) * 20;
+    const total = base + multPts + bonus;
+    g.score += total;
+    this.landInfo = { pad: pad, vs: vs, tilt: tilt, fuel: Math.round(c.fuel), base: base, multPts: multPts, bonus: bonus, total: total, t: c.t };
+    // touchdown dust
+    for (let i = 0; i < 16; i++) this.particles.push({ x: c.x + (Math.random() - 0.5) * 90, y: pad.y - 2, vx: (Math.random() - 0.5) * 130, vy: -10 - Math.random() * 30, life: 0.5 + Math.random() * 0.3, c: '#8FB0C9' });
+  }
+
+  crash(pad, vs, hs, tilt) {
+    const g = this.g, c = this.c;
+    g.phase = 'crashed';
+    g.ships -= 1;
+    let cause = 'OFF-PAD IMPACT';
+    if (pad) {
+      if (vs > 2.5) cause = 'EXCESS SINK RATE';
+      else if (Math.abs(hs) > 1.5) cause = 'EXCESS DRIFT';
+      else cause = 'EXCESS TILT';
+    }
+    this.crashInfo = { vs: Math.max(vs, 0), hs: hs, tilt: tilt, cause: cause, t: c.t };
+    const gy = this.groundY(c.x);
+    c.y = gy - 12; c.thr = 0;
+    this.debris = [];
+    for (let i = 0; i < 9; i++) {
+      const a = Math.PI + Math.random() * Math.PI;
+      const sp = 60 + Math.random() * 140;
+      this.debris.push({ x: c.x, y: gy - 14, vx: Math.cos(a) * sp * (Math.random() < 0.5 ? 1 : -1), vy: -60 - Math.random() * 160, a: Math.random() * 6.3, va: (Math.random() - 0.5) * 9, s: 4 + Math.random() * 8, rest: false, ink: Math.random() < 0.7 ? '#E9F2F9' : '#D9A544' });
+    }
+    for (let i = 0; i < 22; i++) this.particles.push({ x: c.x + (Math.random() - 0.5) * 40, y: gy - 6, vx: (Math.random() - 0.5) * 220, vy: -40 - Math.random() * 120, life: 0.5 + Math.random() * 0.5, c: Math.random() < 0.4 ? '#FF7A29' : '#8FB0C9' });
+    c.ring = 2.2; // reused as red ring timer
+  }
+
+  // ---------- drawing ----------
+  draw(now) {
+    const cv = this.canvasRef.current;
+    if (!cv) return;
+    const ctx = cv.getContext('2d');
+    const P = this.params(), g = this.g, c = this.c;
+    ctx.clearRect(0, 0, 1280, 720);
+
+    // grid
+    if (P.showGrid) {
+      ctx.strokeStyle = 'rgba(44,78,107,0.3)'; ctx.lineWidth = 1;
+      ctx.beginPath();
+      for (let x = 0; x <= 1280; x += 64) { ctx.moveTo(x + 0.5, 0); ctx.lineTo(x + 0.5, 720); }
+      for (let y = 0; y <= 720; y += 64) { ctx.moveTo(0, y + 0.5); ctx.lineTo(1280, y + 0.5); }
+      ctx.stroke();
+      ctx.strokeStyle = 'rgba(44,78,107,0.55)';
+      ctx.beginPath();
+      for (let x = 0; x <= 1280; x += 320) { ctx.moveTo(x + 0.5, 0); ctx.lineTo(x + 0.5, 720); }
+      for (let y = 0; y <= 720; y += 320) { ctx.moveTo(0, y + 0.5); ctx.lineTo(1280, y + 0.5); }
+      ctx.stroke();
+    }
+    // stars
+    this.stars.forEach(s => { ctx.globalAlpha = s.o; ctx.fillStyle = '#E9F2F9'; ctx.beginPath(); ctx.arc(s.x, s.y, s.r, 0, 6.3); ctx.fill(); });
+    ctx.globalAlpha = 1;
+
+    // predicted path (ballistic, engine off)
+    if (P.showPath && g.phase === 'flying') {
+      let px = c.x, py = c.y, pvx = c.vx, pvy = c.vy;
+      const gpx = P.gravity * this.PXPM;
+      ctx.fillStyle = 'rgba(143,176,201,0.9)';
+      let impact = null;
+      for (let i = 0; i < 240; i++) {
+        pvy += gpx * 0.05; px += pvx * 0.05; py += pvy * 0.05;
+        if (px < 0 || px > 1280 || py > 719) break;
+        if (py >= this.groundY(px)) { impact = { x: px, y: this.groundY(px) }; break; }
+        if (i % 4 === 0) { ctx.beginPath(); ctx.arc(px, py, 1.4, 0, 6.3); ctx.fill(); }
+      }
+      if (impact) {
+        ctx.strokeStyle = '#2FE6A6'; ctx.lineWidth = 1.5;
+        ctx.beginPath(); ctx.arc(impact.x, impact.y, 4.5, 0, 6.3); ctx.stroke();
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(impact.x, impact.y - 9); ctx.lineTo(impact.x, impact.y + 9);
+        ctx.moveTo(impact.x - 9, impact.y); ctx.lineTo(impact.x + 9, impact.y);
+        ctx.stroke();
+      }
+    }
+
+    // terrain
+    const pts = this.terrain;
+    ctx.beginPath();
+    ctx.moveTo(pts[0].x, pts[0].y);
+    for (let i = 1; i < pts.length; i++) ctx.lineTo(pts[i].x, pts[i].y);
+    ctx.lineTo(1280, 720); ctx.lineTo(0, 720); ctx.closePath();
+    ctx.fillStyle = '#050B12'; ctx.fill();
+    ctx.save(); ctx.clip();
+    ctx.strokeStyle = 'rgba(44,78,107,0.5)'; ctx.lineWidth = 1;
+    ctx.beginPath();
+    for (let d = -720; d < 1280; d += 9) { ctx.moveTo(d, 720); ctx.lineTo(d + 720, 0); }
+    ctx.stroke();
+    ctx.restore();
+    ctx.beginPath();
+    ctx.moveTo(pts[0].x, pts[0].y);
+    for (let i = 1; i < pts.length; i++) ctx.lineTo(pts[i].x, pts[i].y);
+    ctx.strokeStyle = '#E9F2F9'; ctx.lineWidth = 2; ctx.stroke();
+
+    // pads
+    this.pads.forEach(p => {
+      const gold = p.mult === 3, col = gold ? '#D9A544' : '#2FE6A6';
+      ctx.strokeStyle = col; ctx.lineWidth = 4;
+      ctx.beginPath(); ctx.moveTo(p.x0, p.y); ctx.lineTo(p.x1, p.y); ctx.stroke();
+      const blink = 0.3 + 0.7 * Math.abs(Math.sin(now * 2 + (gold ? 1.3 : 0)));
+      ctx.globalAlpha = blink; ctx.fillStyle = col;
+      ctx.beginPath(); ctx.arc(p.x0 + 4, p.y - 7, 3.5, 0, 6.3); ctx.fill();
+      ctx.beginPath(); ctx.arc(p.x1 - 4, p.y - 7, 3.5, 0, 6.3); ctx.fill();
+      ctx.globalAlpha = 1;
+      ctx.strokeStyle = col; ctx.lineWidth = 1.5;
+      const w = p.x1 - p.x0, nCh = Math.floor(w / 36);
+      for (let i = 1; i <= nCh; i++) {
+        const cx = p.x0 + (w / (nCh + 1)) * i;
+        ctx.beginPath(); ctx.moveTo(cx - 7, p.y + 7); ctx.lineTo(cx, p.y + 13); ctx.lineTo(cx + 7, p.y + 7); ctx.stroke();
+      }
+      ctx.fillStyle = col; ctx.font = "500 12px 'IBM Plex Mono',monospace"; ctx.textAlign = 'center';
+      ctx.fillText('PAD · ×' + p.mult, (p.x0 + p.x1) / 2, p.y + 32);
+      if (gold) {
+        ctx.strokeStyle = col; ctx.lineWidth = 1.5;
+        ctx.beginPath(); ctx.moveTo(p.x1 + 3, p.y); ctx.lineTo(p.x1 + 3, p.y - 34); ctx.stroke();
+        ctx.fillStyle = col;
+        ctx.beginPath(); ctx.moveTo(p.x1 + 3, p.y - 34); ctx.lineTo(p.x1 + 28, p.y - 27); ctx.lineTo(p.x1 + 3, p.y - 20); ctx.closePath(); ctx.fill();
+      }
+    });
+
+    // particles
+    this.particles.forEach(p => { ctx.globalAlpha = Math.min(1, p.life * 2.2); ctx.fillStyle = p.c; ctx.fillRect(p.x - 1.2, p.y - 1.2, 2.4, 2.4); });
+    ctx.globalAlpha = 1;
+
+    if (g.phase === 'crashed') {
+      // debris + red ring
+      const gy = this.groundY(c.x);
+      ctx.fillStyle = 'rgba(0,0,0,0.55)';
+      ctx.beginPath(); ctx.ellipse(c.x, gy + 4, 32, 4.5, 0, 0, 6.3); ctx.fill();
+      this.debris.forEach(d => {
+        ctx.save(); ctx.translate(d.x, d.y); ctx.rotate(d.a);
+        ctx.fillStyle = '#0B1A2A'; ctx.strokeStyle = d.ink; ctx.lineWidth = 1.5;
+        ctx.beginPath(); ctx.moveTo(-d.s, d.s * 0.6); ctx.lineTo(0, -d.s); ctx.lineTo(d.s, d.s * 0.5); ctx.closePath();
+        ctx.fill(); ctx.stroke(); ctx.restore();
+      });
+      if (c.ring > 0) {
+        ctx.globalAlpha = Math.min(1, c.ring);
+        ctx.strokeStyle = '#FF4D5E'; ctx.lineWidth = 3;
+        const rr = 14 + (2.2 - c.ring) * 30;
+        ctx.beginPath(); ctx.moveTo(c.x - rr / 2, gy - 26 - rr / 2); ctx.lineTo(c.x + rr / 2, gy - 26 + rr / 2); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(c.x + rr / 2, gy - 26 - rr / 2); ctx.lineTo(c.x - rr / 2, gy - 26 + rr / 2); ctx.stroke();
+        ctx.globalAlpha = 1;
+      }
+      return;
+    }
+
+    // craft
+    this.drawCraft(ctx, c, now);
+    if (g.phase === 'landed' && c.ring > 0) {
+      const ph = 0.3 + 0.7 * Math.abs(Math.sin(now * 3.5));
+      ctx.globalAlpha = ph;
+      ctx.strokeStyle = '#2FE6A6'; ctx.lineWidth = 1.5; ctx.setLineDash([5, 4]);
+      ctx.beginPath(); ctx.ellipse(c.x, c.y + 26 * 1.35, 39 * 1.35, 7 * 1.35, 0, 0, 6.3); ctx.stroke();
+      ctx.setLineDash([]); ctx.globalAlpha = 1;
+    }
+  }
+
+  drawCraft(ctx, c, now) {
+    const s = 1.35;
+    ctx.save();
+    ctx.translate(c.x, c.y);
+    ctx.rotate(c.rot * Math.PI / 180);
+    ctx.scale(s, s);
+    // flame (behind body)
+    if (c.thr > 0.03) {
+      const fl = 0.85 + 0.3 * Math.sin(now * 40) * Math.random();
+      const len = (22 + c.thr * 26) * fl;
+      ctx.globalAlpha = 0.45; ctx.fillStyle = '#FF7A29';
+      ctx.beginPath(); ctx.moveTo(-9, 20); ctx.lineTo(9, 20); ctx.lineTo(0, 20 + len * 1.25); ctx.closePath(); ctx.fill();
+      ctx.globalAlpha = 0.9; ctx.fillStyle = '#FFB020';
+      ctx.beginPath(); ctx.moveTo(-6.5, 20); ctx.lineTo(6.5, 20); ctx.lineTo(0, 20 + len * 0.85); ctx.closePath(); ctx.fill();
+      ctx.globalAlpha = 1; ctx.fillStyle = '#FFE9C4';
+      ctx.beginPath(); ctx.moveTo(-3.5, 20); ctx.lineTo(3.5, 20); ctx.lineTo(0, 20 + len * 0.42); ctx.closePath(); ctx.fill();
+    }
+    const poly = (p, fill, stroke, lw) => {
+      ctx.beginPath(); ctx.moveTo(p[0][0], p[0][1]);
+      for (let i = 1; i < p.length; i++) ctx.lineTo(p[i][0], p[i][1]);
+      ctx.closePath();
+      if (fill) { ctx.fillStyle = fill; ctx.fill(); }
+      if (stroke) { ctx.strokeStyle = stroke; ctx.lineWidth = lw; ctx.stroke(); }
+    };
+    const line = (x1, y1, x2, y2, stroke, lw) => { ctx.strokeStyle = stroke; ctx.lineWidth = lw; ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke(); };
+    // antenna
+    line(0, -36, 0, -45, '#E9F2F9', 1.5);
+    ctx.fillStyle = '#E9F2F9'; ctx.beginPath(); ctx.arc(0, -47, 2, 0, 6.3); ctx.fill();
+    // cabin
+    poly([[-13, -36], [13, -36], [19, -28], [19, -16], [13, -10], [-13, -10]], '#0B1A2A', '#E9F2F9', 2);
+    poly([[-13, -10], [-19, -16], [-19, -28], [-13, -36]], null, '#E9F2F9', 2);
+    ctx.fillStyle = '#081420'; ctx.strokeStyle = '#E9F2F9'; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.arc(7, -23, 4.5, 0, 6.3); ctx.fill(); ctx.stroke();
+    // rcs pods
+    ctx.fillStyle = '#0B1A2A'; ctx.strokeStyle = '#E9F2F9'; ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.rect(-24, -33, 5, 8); ctx.fill(); ctx.stroke();
+    ctx.beginPath(); ctx.rect(19, -33, 5, 8); ctx.fill(); ctx.stroke();
+    // descent stage + gold wrap
+    poly([[-21, -10], [21, -10], [15, 8], [-15, 8]], '#0B1A2A', '#E9F2F9', 2);
+    poly([[-17, -7], [17, -7], [12.8, 4.5], [-12.8, 4.5]], 'rgba(217,165,68,0.16)', '#D9A544', 1);
+    line(-6, -7, -9.5, 4.5, 'rgba(217,165,68,0.7)', 1);
+    line(6, -7, 2.5, 4.5, 'rgba(217,165,68,0.7)', 1);
+    // engine bell
+    poly([[-6, 8], [6, 8], [10, 18], [-10, 18]], '#081420', '#E9F2F9', 2);
+    // legs
+    line(-14, 0, -29, 24, '#E9F2F9', 2); line(-11, 8, -25, 24, '#E9F2F9', 1.5); line(-34, 25, -24, 25, '#E9F2F9', 3);
+    line(14, 0, 29, 24, '#E9F2F9', 2); line(11, 8, 25, 24, '#E9F2F9', 1.5); line(24, 25, 34, 25, '#E9F2F9', 3);
+    // RCS puffs while rotating
+    if (this.keys['ArrowLeft'] || this.keys['ArrowRight']) {
+      const left = this.keys['ArrowRight'];
+      ctx.save();
+      ctx.translate(left ? -27 : 27, -29);
+      ctx.rotate(left ? Math.PI : 0);
+      ctx.fillStyle = '#FFB020';
+      ctx.beginPath(); ctx.moveTo(0, -2.5); ctx.lineTo(0, 2.5); ctx.lineTo(7, 0); ctx.closePath(); ctx.fill();
+      ctx.globalAlpha = 0.7; ctx.fillStyle = '#FF7A29';
+      ctx.beginPath(); ctx.moveTo(7, -1.8); ctx.lineTo(7, 1.8); ctx.lineTo(12.5, 0); ctx.closePath(); ctx.fill();
+      ctx.restore();
+    }
+    ctx.restore();
+  }
+
+  // ---------- HUD ----------
+  chip(v, lim) {
+    const a = Math.abs(v) / lim;
+    if (a > 1) return { c: '#FF4D5E', bg: 'rgba(255,77,94,.13)', g: '✕', s: 2 };
+    if (a > 0.8) return { c: '#FFB020', bg: 'rgba(255,176,32,.12)', g: '▲', s: 1 };
+    return { c: '#2FE6A6', bg: 'rgba(47,230,166,.12)', g: '●', s: 0 };
+  }
+
+  renderVals() {
+    const g = this.g || { score: 0, ships: 3, phase: 'ready' };
+    const c = this.c || { x: 180, y: 120, vx: 0, vy: 0, rot: 0, thr: 0, fuel: 60, t: 0 };
+    const P = this.params ? this.params() : { startFuel: 60 };
+    const vs = -c.vy / this.PXPM;
+    const hs = c.vx / this.PXPM;
+    const alt = this.groundY ? Math.max(0, (this.groundY(c.x) - c.y - 25 * 1.35) / this.PXPM * 3.8) : 0;
+    const vsChip = this.chip(vs, 2.5), hsChip = this.chip(hs, 1.5), tiltChip = this.chip(c.rot, 8);
+    const worst = Math.max(vsChip.s, hsChip.s, tiltChip.s);
+    let annC, annBg, annT;
+    if (g.phase === 'landed') { annC = '#2FE6A6'; annBg = 'rgba(47,230,166,.12)'; annT = '● TOUCHDOWN CONFIRMED'; }
+    else if (g.phase === 'crashed') { annC = '#FF4D5E'; annBg = 'rgba(255,77,94,.14)'; annT = '✕ LOSS OF VEHICLE'; }
+    else if (worst === 2) { annC = '#FF4D5E'; annBg = 'rgba(255,77,94,.14)'; annT = vsChip.s === 2 ? '✕ NO-GO — REDUCE SINK RATE' : (hsChip.s === 2 ? '✕ NO-GO — KILL DRIFT' : '✕ NO-GO — LEVEL CRAFT'); }
+    else if (worst === 1) { annC = '#FFB020'; annBg = 'rgba(255,176,32,.12)'; annT = '▲ CAUTION — TIGHTEN APPROACH'; }
+    else { annC = '#2FE6A6'; annBg = 'rgba(47,230,166,.12)'; annT = '● GO FOR LANDING'; }
+    const fuelPct = P.startFuel > 0 ? (c.fuel / P.startFuel) * 100 : 0;
+    const lit = Math.round(c.thr * 10);
+    const segs = [];
+    for (let i = 0; i < 10; i++) segs.push(i < lit ? { bc: '#FFB020', bg: '#FFB020' } : { bc: '#2C4E6B', bg: 'transparent' });
+    const fmt1 = (v) => (v > 0.05 ? '+' : v < -0.05 ? '-' : '') + Math.abs(v).toFixed(1);
+    const fmtScore = (n) => { const s = String(Math.max(0, Math.round(n))).padStart(5, '0'); return s.slice(0, s.length - 3) + ' ' + s.slice(-3); };
+    const fmtClock = (t) => String(Math.floor(t / 60)).padStart(2, '0') + ':' + String(Math.floor(t % 60)).padStart(2, '0');
+    const li = this.landInfo, ci = this.crashInfo;
+    return {
+      rootRef: this.rootRef,
+      canvasRef: this.canvasRef,
+      stageT: 'scale(' + (this.scale || 1).toFixed(3) + ')',
+      fuel: Math.round(fuelPct),
+      fuelValC: fuelPct <= 10 ? '#FF4D5E' : fuelPct <= 25 ? '#FFB020' : '#E9F2F9',
+      fuelBarC: fuelPct <= 10 ? '#FF4D5E' : fuelPct <= 25 ? '#FFB020' : '#E9F2F9',
+      thr: Math.round(c.thr * 100),
+      thrColor: c.thr > 0.03 ? '#FFB020' : '#8FB0C9',
+      thrSegs: segs,
+      score: fmtScore(g.score),
+      clock: fmtClock(c.t),
+      alt: Math.round(alt),
+      vs: fmt1(vs), hs: fmt1(hs), tilt: Math.round(Math.abs(c.rot)),
+      vsValC: vsChip.s === 2 ? '#FF4D5E' : '#E9F2F9',
+      hsValC: hsChip.s === 2 ? '#FF4D5E' : '#E9F2F9',
+      tiltValC: tiltChip.s === 2 ? '#FF4D5E' : '#E9F2F9',
+      vsChip: vsChip, hsChip: hsChip, tiltChip: tiltChip,
+      annC: annC, annBg: annBg, annT: annT,
+      siteName: this.siteName || 'MARE SERENITATIS',
+      shipsStr: '▲'.repeat(Math.max(0, g.ships)) + '△'.repeat(Math.max(0, 3 - g.ships)),
+      showReady: g.phase === 'ready',
+      showSuccess: g.phase === 'landed' && !!li,
+      showCrash: g.phase === 'crashed' && !!ci,
+      tdPad: li ? 'PAD ×' + li.pad.mult : '',
+      tdClock: li ? fmtClock(li.t) : '',
+      tdVs: li ? Math.abs(li.vs).toFixed(1) : '',
+      tdTilt: li ? li.tilt.toFixed(1) : '',
+      tdFuel: li ? li.fuel : 0,
+      tdMult: li ? li.pad.mult : 1,
+      tdMultPts: li ? (li.multPts > 0 ? li.multPts.toLocaleString('en-US').replace(',', ' ') : '—') : '',
+      tdBonus: li ? li.bonus : 0,
+      tdTotal: li ? li.total.toLocaleString('en-US').replace(',', ' ') : '',
+      crClock: ci ? fmtClock(ci.t) : '',
+      crVs: ci ? Math.abs(ci.vs).toFixed(1) : '',
+      crTilt: ci ? ci.tilt.toFixed(0) : '',
+      crTiltC: ci && ci.tilt > 8 ? '#FF4D5E' : '#E9F2F9',
+      crCause: ci ? ci.cause : '',
+      crScore: fmtScore(g.score),
+      crShips: g.ships,
+      crFooter: g.ships > 0 ? 'R — RE-FLY SITE' : 'OUT OF CRAFT — ENTER: NEW GAME'
+    };
+  }
+}
+</script>
+</body>
+</html>

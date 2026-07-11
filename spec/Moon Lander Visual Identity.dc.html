@@ -1,0 +1,1708 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#060D16;font-family:'Jost',sans-serif;color:#E9F2F9;}
+a{color:#2FE6A6;text-decoration:none;}
+a:hover{color:#D9A544;}
+.dv-turn{padding:44px 48px 36px;border-bottom:1px solid rgba(233,242,249,.08);scroll-margin-top:16px;}
+.dv-thd{display:flex;align-items:baseline;gap:10px;margin:0 0 22px;}
+.dv-tid{font:600 10px 'IBM Plex Mono',monospace;padding:3px 8px;background:#D9A544;color:#081420;border-radius:3px;text-decoration:none;}
+.dv-tid:hover{color:#081420;}
+.dv-tname{font:600 14px/1.2 'Jost',sans-serif;letter-spacing:.06em;text-transform:uppercase;color:#E9F2F9;}
+.dv-opts{display:flex;flex-wrap:wrap;gap:36px;align-items:flex-start;}
+.dv-opt{flex:none;display:flex;flex-direction:column;gap:10px;scroll-margin-top:16px;}
+.dv-oid{font:600 10.5px 'IBM Plex Mono',monospace;padding:3px 8px;background:rgba(233,242,249,.12);color:#E9F2F9;border-radius:3px;text-decoration:none;}
+.dv-oid:hover{color:#D9A544;}
+.dv-olabel{display:flex;align-items:baseline;gap:9px;font:400 12px/1.3 'Jost',sans-serif;color:rgba(233,242,249,.6);}
+.dv-card{max-width:100%;background:#0E2133;border:1px solid #2C4E6B;border-radius:2px;overflow:hidden;}
+.dv-opt:target .dv-oid{background:#2FE6A6;color:#04110C;}
+.dv-next{margin:26px 0 0;font:400 12.5px/1.6 'Jost',sans-serif;color:rgba(233,242,249,.55);}
+</style>
+</helmet>
+
+<svg aria-hidden="true" style="position:absolute;width:0;height:0;overflow:hidden">
+  <defs>
+    <pattern id="fm-hatch" width="9" height="9" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <line x1="0" y1="0" x2="0" y2="9" stroke="#2C4E6B" stroke-width="1" stroke-opacity="0.5"/>
+    </pattern>
+    <pattern id="fm-grid" width="64" height="64" patternUnits="userSpaceOnUse">
+      <path d="M 64 0 L 0 0 0 64" fill="none" stroke="#2C4E6B" stroke-width="1" stroke-opacity="0.3"/>
+    </pattern>
+    <pattern id="fm-gridM" width="320" height="320" patternUnits="userSpaceOnUse">
+      <path d="M 320 0 L 0 0 0 320" fill="none" stroke="#2C4E6B" stroke-width="1" stroke-opacity="0.55"/>
+    </pattern>
+    <g id="fm-craft">
+      <line x1="0" y1="-36" x2="0" y2="-45" stroke="#E9F2F9" stroke-width="1.5"/>
+      <circle cx="0" cy="-47" r="2" fill="#E9F2F9"/>
+      <polygon points="-13,-36 13,-36 19,-28 19,-16 13,-10 -13,-10 -19,-16 -19,-28" fill="#0B1A2A" stroke="#E9F2F9" stroke-width="2"/>
+      <circle cx="7" cy="-23" r="4.5" fill="#081420" stroke="#E9F2F9" stroke-width="2"/>
+      <rect x="-24" y="-33" width="5" height="8" fill="#0B1A2A" stroke="#E9F2F9" stroke-width="1.5"/>
+      <rect x="19" y="-33" width="5" height="8" fill="#0B1A2A" stroke="#E9F2F9" stroke-width="1.5"/>
+      <polygon points="-21,-10 21,-10 15,8 -15,8" fill="#0B1A2A" stroke="#E9F2F9" stroke-width="2"/>
+      <polygon points="-17,-7 17,-7 12.8,4.5 -12.8,4.5" fill="rgba(217,165,68,0.16)" stroke="#D9A544" stroke-width="1"/>
+      <line x1="-6" y1="-7" x2="-9.5" y2="4.5" stroke="#D9A544" stroke-width="1" stroke-opacity="0.7"/>
+      <line x1="6" y1="-7" x2="2.5" y2="4.5" stroke="#D9A544" stroke-width="1" stroke-opacity="0.7"/>
+      <polygon points="-6,8 6,8 10,18 -10,18" fill="#081420" stroke="#E9F2F9" stroke-width="2"/>
+      <line x1="-14" y1="0" x2="-29" y2="24" stroke="#E9F2F9" stroke-width="2"/>
+      <line x1="-11" y1="8" x2="-25" y2="24" stroke="#E9F2F9" stroke-width="1.5"/>
+      <line x1="-34" y1="25" x2="-24" y2="25" stroke="#E9F2F9" stroke-width="3"/>
+      <line x1="14" y1="0" x2="29" y2="24" stroke="#E9F2F9" stroke-width="2"/>
+      <line x1="11" y1="8" x2="25" y2="24" stroke="#E9F2F9" stroke-width="1.5"/>
+      <line x1="24" y1="25" x2="34" y2="25" stroke="#E9F2F9" stroke-width="3"/>
+    </g>
+    <g id="fm-flame">
+      <polygon points="-9,20 9,20 0,52" fill="#FF7A29" opacity="0.45">
+        <animate attributeName="points" dur="0.34s" repeatCount="indefinite" values="-9,20 9,20 0,52; -8,20 8,20 0,45; -9.5,20 9.5,20 0,56; -9,20 9,20 0,52"/>
+      </polygon>
+      <polygon points="-6.5,20 6.5,20 0,42" fill="#FFB020" opacity="0.9">
+        <animate attributeName="points" dur="0.26s" repeatCount="indefinite" values="-6.5,20 6.5,20 0,42; -6,20 6,20 0,36; -7,20 7,20 0,46; -6.5,20 6.5,20 0,42"/>
+      </polygon>
+      <polygon points="-3.5,20 3.5,20 0,31" fill="#FFE9C4">
+        <animate attributeName="opacity" dur="0.2s" repeatCount="indefinite" values="1;0.72;1"/>
+      </polygon>
+      <circle cx="-3" cy="56" r="1.6" fill="#FF7A29">
+        <animate attributeName="cy" dur="1.1s" repeatCount="indefinite" values="56;84"/>
+        <animate attributeName="opacity" dur="1.1s" repeatCount="indefinite" values="0.9;0"/>
+      </circle>
+      <circle cx="4" cy="54" r="1.2" fill="#FFB020">
+        <animate attributeName="cy" dur="0.9s" begin="0.3s" repeatCount="indefinite" values="54;80"/>
+        <animate attributeName="opacity" dur="0.9s" begin="0.3s" repeatCount="indefinite" values="0.8;0"/>
+      </circle>
+      <circle cx="-1" cy="58" r="1" fill="#FF7A29">
+        <animate attributeName="cy" dur="1.3s" begin="0.55s" repeatCount="indefinite" values="58;88"/>
+        <animate attributeName="opacity" dur="1.3s" begin="0.55s" repeatCount="indefinite" values="0.7;0"/>
+      </circle>
+      <circle cx="2" cy="56" r="0.9" fill="#FF7A29">
+        <animate attributeName="cy" dur="1s" begin="0.75s" repeatCount="indefinite" values="56;82"/>
+        <animate attributeName="opacity" dur="1s" begin="0.75s" repeatCount="indefinite" values="0.6;0"/>
+      </circle>
+    </g>
+    <g id="fm-rcs">
+      <polygon points="0,-2.5 0,2.5 7,0" fill="#FFB020"/>
+      <polygon points="7,-1.8 7,1.8 12.5,0" fill="#FF7A29" opacity="0.7"/>
+      <line x1="14" y1="0" x2="18" y2="0" stroke="#FF7A29" stroke-width="1" stroke-opacity="0.5"/>
+    </g>
+    <g id="fm-ring">
+      <ellipse cx="0" cy="26" rx="39" ry="7" fill="none" stroke="#2FE6A6" stroke-width="1.5" stroke-dasharray="5 4"/>
+    </g>
+    <g id="fm-debris">
+      <ellipse cx="0" cy="24" rx="32" ry="4.5" fill="#000000" opacity="0.55"/>
+      <polygon points="-24,16 -14,8 -16,20" fill="#0B1A2A" stroke="#E9F2F9" stroke-width="1.5"/>
+      <polygon points="-4,-6 6,-12 8,0 -2,2" fill="#0B1A2A" stroke="#E9F2F9" stroke-width="1.5"/>
+      <polygon points="16,10 26,6 24,18" fill="#0B1A2A" stroke="#E9F2F9" stroke-width="1.5"/>
+      <polygon points="2,14 10,20 0,22" fill="#0B1A2A" stroke="#E9F2F9" stroke-width="1.5"/>
+      <polygon points="-16,-20 -8,-22 -5,-13 -14,-11" fill="#0B1A2A" stroke="#D9A544" stroke-width="1"/>
+      <line x1="18" y1="-4" x2="30" y2="-12" stroke="#E9F2F9" stroke-width="2"/>
+      <line x1="30" y1="-14" x2="36" y2="-7" stroke="#E9F2F9" stroke-width="3"/>
+      <circle cx="-28" cy="-2" r="1.2" fill="#FFB020"/>
+      <circle cx="12" cy="-16" r="1" fill="#FF7A29"/>
+      <circle cx="28" cy="2" r="1.2" fill="#FF7A29" opacity="0.7"/>
+      <line x1="-7" y1="-42" x2="7" y2="-28" stroke="#FF4D5E" stroke-width="3"/>
+      <line x1="7" y1="-42" x2="-7" y2="-28" stroke="#FF4D5E" stroke-width="3"/>
+    </g>
+      <pattern id="tm-stipple" width="6" height="6" patternUnits="userSpaceOnUse">
+      <circle cx="1.5" cy="1.5" r="0.7" fill="#E8E2D6" fill-opacity="0.45"/>
+    </pattern>
+    <g id="tm-craft">
+      <line x1="0" y1="-36" x2="0" y2="-45" stroke="#98A4B3" stroke-width="1.5"/>
+      <circle cx="0" cy="-47" r="2" fill="#F4F7FA"/>
+      <polygon points="-13,-36 13,-36 19,-28 19,-16 13,-10 -13,-10 -19,-16 -19,-28" fill="#232A33" stroke="#98A4B3" stroke-width="1.5"/>
+      <polyline points="-13,-36 -19,-28 -19,-16 -13,-10" fill="none" stroke="#F4F7FA" stroke-width="2"/>
+      <circle cx="7" cy="-23" r="4.5" fill="#10151B" stroke="#98A4B3" stroke-width="1.5"/>
+      <circle cx="7" cy="-23" r="2.3" fill="#FFD9A8"/>
+      <rect x="-24" y="-33" width="5" height="8" fill="#1A2028" stroke="#98A4B3" stroke-width="1.5"/>
+      <line x1="-24" y1="-33" x2="-24" y2="-25" stroke="#F4F7FA" stroke-width="1.5"/>
+      <rect x="19" y="-33" width="5" height="8" fill="#1A2028" stroke="#98A4B3" stroke-width="1.5"/>
+      <polygon points="-21,-10 21,-10 15,8 -15,8" fill="#1A2028" stroke="#98A4B3" stroke-width="1.5"/>
+      <line x1="-21" y1="-10" x2="-15" y2="8" stroke="#F4F7FA" stroke-width="2"/>
+      <rect x="-4" y="-6" width="9" height="5" fill="#F4F7FA"/>
+      <polygon points="-6,8 6,8 10,18 -10,18" fill="#10151B" stroke="#98A4B3" stroke-width="1.5"/>
+      <line x1="-14" y1="0" x2="-29" y2="24" stroke="#F4F7FA" stroke-width="2"/>
+      <line x1="-11" y1="8" x2="-25" y2="24" stroke="#98A4B3" stroke-width="1.5"/>
+      <line x1="-34" y1="25" x2="-24" y2="25" stroke="#F4F7FA" stroke-width="3"/>
+      <line x1="14" y1="0" x2="29" y2="24" stroke="#98A4B3" stroke-width="1.5"/>
+      <line x1="11" y1="8" x2="25" y2="24" stroke="#5A646F" stroke-width="1.5"/>
+      <line x1="24" y1="25" x2="34" y2="25" stroke="#8A94A0" stroke-width="3"/>
+    </g>
+    <g id="tm-flame">
+      <polygon points="-8,20 8,20 0,50" fill="#9CC7FF" opacity="0.35">
+        <animate attributeName="points" dur="0.3s" repeatCount="indefinite" values="-8,20 8,20 0,50; -7,20 7,20 0,44; -8.5,20 8.5,20 0,53; -8,20 8,20 0,50"/>
+      </polygon>
+      <polygon points="-5.5,20 5.5,20 0,40" fill="#CFE4FF" opacity="0.85">
+        <animate attributeName="points" dur="0.24s" repeatCount="indefinite" values="-5.5,20 5.5,20 0,40; -5,20 5,20 0,35; -6,20 6,20 0,43; -5.5,20 5.5,20 0,40"/>
+      </polygon>
+      <polygon points="-3,20 3,20 0,30" fill="#F4F7FA"/>
+      <polygon points="0,32 1.8,36 0,40 -1.8,36" fill="#E8F3FF" opacity="0.9">
+        <animate attributeName="opacity" dur="0.2s" repeatCount="indefinite" values="0.9;0.4;0.9"/>
+      </polygon>
+      <circle cx="-2.5" cy="52" r="1.3" fill="#CFE4FF">
+        <animate attributeName="cy" dur="1s" repeatCount="indefinite" values="52;78"/>
+        <animate attributeName="opacity" dur="1s" repeatCount="indefinite" values="0.8;0"/>
+      </circle>
+      <circle cx="3" cy="50" r="1" fill="#9CC7FF">
+        <animate attributeName="cy" dur="0.85s" begin="0.3s" repeatCount="indefinite" values="50;74"/>
+        <animate attributeName="opacity" dur="0.85s" begin="0.3s" repeatCount="indefinite" values="0.7;0"/>
+      </circle>
+    </g>
+    <g id="tm-rcs">
+      <polygon points="0,-2.5 0,2.5 7,0" fill="#CFE4FF"/>
+      <polygon points="7,-1.8 7,1.8 12.5,0" fill="#9CC7FF" opacity="0.7"/>
+      <line x1="14" y1="0" x2="18" y2="0" stroke="#9CC7FF" stroke-width="1" stroke-opacity="0.5"/>
+    </g>
+    <g id="tm-debris">
+      <ellipse cx="0" cy="24" rx="32" ry="4.5" fill="#000000" opacity="0.7"/>
+      <polygon points="-24,16 -14,8 -16,20" fill="#1A2028" stroke="#98A4B3" stroke-width="1.5"/>
+      <polygon points="-4,-6 6,-12 8,0 -2,2" fill="#1A2028" stroke="#F4F7FA" stroke-width="1.5"/>
+      <polygon points="16,10 26,6 24,18" fill="#1A2028" stroke="#98A4B3" stroke-width="1.5"/>
+      <polygon points="2,14 10,20 0,22" fill="#1A2028" stroke="#5A646F" stroke-width="1.5"/>
+      <polygon points="-16,-20 -8,-22 -5,-13 -14,-11" fill="#1A2028" stroke="#FFD9A8" stroke-width="1"/>
+      <line x1="18" y1="-4" x2="30" y2="-12" stroke="#98A4B3" stroke-width="2"/>
+      <line x1="30" y1="-14" x2="36" y2="-7" stroke="#F4F7FA" stroke-width="3"/>
+      <circle cx="-28" cy="-2" r="1.2" fill="#FFD9A8"/>
+      <circle cx="12" cy="-16" r="1" fill="#CFE4FF"/>
+      <circle cx="28" cy="2" r="1.2" fill="#CFE4FF" opacity="0.7"/>
+      <line x1="-7" y1="-42" x2="7" y2="-28" stroke="#FF4D5E" stroke-width="3"/>
+      <line x1="7" y1="-42" x2="-7" y2="-28" stroke="#FF4D5E" stroke-width="3"/>
+    </g>
+  </defs>
+</svg>
+
+<section class="dv-turn" id="t2">
+  <div class="dv-thd"><a class="dv-tid" href="#t2">2</a><span class="dv-tname">Terminator Line — full spec · playable build · 1a hero now flies on loop</span></div>
+  <div class="dv-opts">
+
+    <div class="dv-opt" id="2a" data-screen-label="2a — Terminator Line spec sheet">
+      <div class="dv-olabel"><a class="dv-oid" href="#2a">2a</a>ALTERNATE, DEVELOPED — “Terminator Line” · full visual design spec (parity with <a class="dv-oid" href="#1a">1a</a>)</div>
+      <div class="dv-card" style="width:1360px;background:#04060A;border:1px solid #22282F;">
+
+        <div style="display:grid;grid-template-columns:1fr 190px 150px 130px 170px;border-bottom:1px solid #2A3138;">
+          <div style="padding:22px 28px;border-right:1px solid #2A3138;">
+            <div style="font:500 10px 'IBM Plex Mono',monospace;letter-spacing:.28em;color:#8A94A0;margin-bottom:6px;">VISUAL IDENTITY SPEC — SHEET 02 · ALTERNATE</div>
+            <div style="font:700 26px/1.1 'Jost',sans-serif;letter-spacing:.1em;color:#F4F7FA;">MOON LANDER</div>
+          </div>
+          <div style="padding:14px 16px;border-right:1px solid #2A3138;">
+            <div style="font:500 9px 'IBM Plex Mono',monospace;letter-spacing:.2em;color:#8A94A0;margin-bottom:5px;">DIRECTION</div>
+            <div style="font:600 13px 'Jost',sans-serif;letter-spacing:.08em;color:#F4F7FA;">TERMINATOR LINE</div>
+            <div style="font:400 10.5px 'IBM Plex Mono',monospace;color:#FFD9A8;margin-top:3px;">DEVELOPED</div>
+          </div>
+          <div style="padding:14px 16px;border-right:1px solid #2A3138;">
+            <div style="font:500 9px 'IBM Plex Mono',monospace;letter-spacing:.2em;color:#8A94A0;margin-bottom:5px;">REF FRAME</div>
+            <div style="font:500 12px 'IBM Plex Mono',monospace;color:#F4F7FA;">1280 × 720</div>
+            <div style="font:400 10.5px 'IBM Plex Mono',monospace;color:#8A94A0;margin-top:3px;">PX @ 1×</div>
+          </div>
+          <div style="padding:14px 16px;border-right:1px solid #2A3138;">
+            <div style="font:500 9px 'IBM Plex Mono',monospace;letter-spacing:.2em;color:#8A94A0;margin-bottom:5px;">REV</div>
+            <div style="font:500 12px 'IBM Plex Mono',monospace;color:#F4F7FA;">A</div>
+            <div style="font:400 10.5px 'IBM Plex Mono',monospace;color:#8A94A0;margin-top:3px;">2026-07-11</div>
+          </div>
+          <div style="padding:14px 16px;">
+            <div style="font:500 9px 'IBM Plex Mono',monospace;letter-spacing:.2em;color:#8A94A0;margin-bottom:5px;">PRIMARY</div>
+            <div style="font:600 13px 'Jost',sans-serif;letter-spacing:.08em;color:#F4F7FA;">FLIGHT MANUAL</div>
+            <div style="font:400 10.5px 'IBM Plex Mono',monospace;margin-top:3px;color:#8A94A0;">SEE <a class="dv-oid" href="#1a">1a</a></div>
+          </div>
+        </div>
+
+        <div style="padding:34px 40px 40px;display:flex;flex-direction:column;gap:44px;">
+
+          <div>
+            <div style="display:flex;align-items:baseline;gap:12px;border-bottom:1px solid #2A3138;padding-bottom:8px;margin-bottom:18px;">
+              <span style="font:600 11px 'IBM Plex Mono',monospace;color:#FFD9A8;">S-01</span>
+              <span style="font:600 13px 'Jost',sans-serif;letter-spacing:.22em;color:#F4F7FA;">DIRECTION &amp; RATIONALE</span>
+            </div>
+            <div style="display:grid;grid-template-columns:1.5fr 1fr;gap:36px;">
+              <div style="font:400 14px/1.65 'Jost',sans-serif;color:#C9D4DF;text-wrap:pretty;">
+                The Moon at local dawn: sunlight raking in at 2°, every rising slope a hard white edge, every valley in kilometres of cast shadow. Where <a class="dv-oid" href="#1a">1a</a> draws the world as a diagram, this direction photographs it — <span style="color:#F4F7FA;font-weight:600;">light is the terrain data</span>. You judge slope by which edges burn and which vanish.
+                The craft is dark hardware, read by its sun-side rim, a warm cabin window and one retro-reflective decal. The signal trio (teal / amber / red) is shared with <a class="dv-oid" href="#1a">1a</a> and remains the only judgment color on screen — <span style="color:#F4F7FA;font-weight:600;">everything else is monochrome</span>. No ambient fill, no glow, no panel chrome: the HUD is bare type floating on void.
+              </div>
+              <div style="display:flex;flex-direction:column;gap:8px;">
+                <div style="border:1px solid #2A3138;padding:9px 14px;font:600 12px 'Jost',sans-serif;letter-spacing:.16em;color:#F4F7FA;">01 — LIGHT IS TERRAIN DATA</div>
+                <div style="border:1px solid #2A3138;padding:9px 14px;font:600 12px 'Jost',sans-serif;letter-spacing:.16em;color:#F4F7FA;">02 — COLOR = CONSEQUENCE</div>
+                <div style="border:1px solid #2A3138;padding:9px 14px;font:600 12px 'Jost',sans-serif;letter-spacing:.16em;color:#F4F7FA;">03 — DARKNESS IS ALLOWED</div>
+                <div style="font:400 11.5px/1.5 'IBM Plex Mono',monospace;color:#8A94A0;margin-top:4px;">NOT THIS: blue-gray ambient mush, bloom/glow, panel boxes, survey grids — the drafting layer belongs to <a class="dv-oid" href="#1a">1a</a>.</div>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <div style="display:flex;align-items:baseline;gap:12px;border-bottom:1px solid #2A3138;padding-bottom:8px;margin-bottom:18px;">
+              <span style="font:600 11px 'IBM Plex Mono',monospace;color:#FFD9A8;">S-02</span>
+              <span style="font:600 13px 'Jost',sans-serif;letter-spacing:.22em;color:#F4F7FA;">PALETTE</span>
+              <span style="font:400 11px 'IBM Plex Mono',monospace;color:#8A94A0;margin-left:auto;">MONOCHROME FIELD = 6 · LIGHTS = 3 · SIGNALS = 3, SHARED WITH 1a</span>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:14px;margin-bottom:14px;">
+              <div>
+                <div style="height:56px;background:#04060A;border:1px solid rgba(244,247,250,.18);"></div>
+                <div style="font:600 11.5px 'Jost',sans-serif;letter-spacing:.1em;margin-top:7px;color:#F4F7FA;">VOID</div>
+                <div style="font:400 11px 'IBM Plex Mono',monospace;color:#8A94A0;">#04060A · sky, page ground</div>
+              </div>
+              <div>
+                <div style="height:56px;background:#10151B;border:1px solid rgba(244,247,250,.18);"></div>
+                <div style="font:600 11.5px 'Jost',sans-serif;letter-spacing:.1em;margin-top:7px;color:#F4F7FA;">SHADOW BASALT</div>
+                <div style="font:400 11px 'IBM Plex Mono',monospace;color:#8A94A0;">#10151B · terrain mass, unlit faces</div>
+              </div>
+              <div>
+                <div style="height:56px;background:#2B323B;"></div>
+                <div style="font:600 11.5px 'Jost',sans-serif;letter-spacing:.1em;margin-top:7px;color:#F4F7FA;">HULL GUNMETAL</div>
+                <div style="font:400 11px 'IBM Plex Mono',monospace;color:#8A94A0;">#2B323B · craft plates — never brighter</div>
+              </div>
+              <div>
+                <div style="height:56px;background:#333B45;"></div>
+                <div style="font:600 11.5px 'Jost',sans-serif;letter-spacing:.1em;margin-top:7px;color:#F4F7FA;">GRAPHITE LINE</div>
+                <div style="font:400 11px 'IBM Plex Mono',monospace;color:#8A94A0;">#333B45 · shadow contours, hairlines</div>
+              </div>
+              <div>
+                <div style="height:56px;background:#8A94A0;"></div>
+                <div style="font:600 11.5px 'Jost',sans-serif;letter-spacing:.1em;margin-top:7px;color:#F4F7FA;">VELLUM GRAY</div>
+                <div style="font:400 11px 'IBM Plex Mono',monospace;color:#8A94A0;">#8A94A0 · labels, units, annotations</div>
+              </div>
+              <div>
+                <div style="height:56px;background:#E8E2D6;"></div>
+                <div style="font:600 11.5px 'Jost',sans-serif;letter-spacing:.1em;margin-top:7px;color:#F4F7FA;">SUNLIT REGOLITH</div>
+                <div style="font:400 11px 'IBM Plex Mono',monospace;color:#8A94A0;">#E8E2D6 · lit crests, warm mineral white</div>
+              </div>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:14px;">
+              <div>
+                <div style="height:56px;background:#F4F7FA;"></div>
+                <div style="font:600 11.5px 'Jost',sans-serif;letter-spacing:.1em;margin-top:7px;color:#F4F7FA;">RIM WHITE</div>
+                <div style="font:400 11px 'IBM Plex Mono',monospace;color:#8A94A0;">#F4F7FA · sun-side edges, HUD values</div>
+              </div>
+              <div>
+                <div style="height:56px;background:#FFD9A8;"></div>
+                <div style="font:600 11.5px 'Jost',sans-serif;letter-spacing:.1em;margin-top:7px;color:#F4F7FA;">CABIN GLOW</div>
+                <div style="font:400 11px 'IBM Plex Mono',monospace;color:#8A94A0;">#FFD9A8 · window, score, bonus pad ×3</div>
+              </div>
+              <div>
+                <div style="height:56px;background:#CFE4FF;"></div>
+                <div style="font:600 11.5px 'Jost',sans-serif;letter-spacing:.1em;margin-top:7px;color:#F4F7FA;">CRYO FLAME</div>
+                <div style="font:400 11px 'IBM Plex Mono',monospace;color:#8A94A0;">#CFE4FF · plume body · core #F4F7FA</div>
+              </div>
+              <div>
+                <div style="height:56px;background:#2FE6A6;"></div>
+                <div style="font:600 11.5px 'Jost',sans-serif;letter-spacing:.1em;margin-top:7px;color:#F4F7FA;">GO TEAL ●</div>
+                <div style="font:400 11px 'IBM Plex Mono',monospace;color:#8A94A0;">#2FE6A6 · shared with 1a</div>
+              </div>
+              <div>
+                <div style="height:56px;background:#FFB020;"></div>
+                <div style="font:600 11.5px 'Jost',sans-serif;letter-spacing:.1em;margin-top:7px;color:#F4F7FA;">CAUTION AMBER ▲</div>
+                <div style="font:400 11px 'IBM Plex Mono',monospace;color:#8A94A0;">#FFB020 · shared with 1a</div>
+              </div>
+              <div>
+                <div style="height:56px;background:#FF4D5E;"></div>
+                <div style="font:600 11.5px 'Jost',sans-serif;letter-spacing:.1em;margin-top:7px;color:#F4F7FA;">ABORT RED ✕</div>
+                <div style="font:400 11px 'IBM Plex Mono',monospace;color:#8A94A0;">#FF4D5E · shared with 1a</div>
+              </div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px;">
+              <div style="border:1px dashed #2A3138;padding:10px 12px;">
+                <div style="font:600 10px 'IBM Plex Mono',monospace;letter-spacing:.14em;color:#FFD9A8;margin-bottom:5px;">RATIONING RULE — CARRIED OVER</div>
+                <div style="font:400 11px/1.5 'Jost',sans-serif;color:#C9D4DF;">Signals never decorate. If it is teal, amber or red, it is telling you whether you live.</div>
+              </div>
+              <div style="border:1px dashed #2A3138;padding:10px 12px;">
+                <div style="font:600 10px 'IBM Plex Mono',monospace;letter-spacing:.14em;color:#FFD9A8;margin-bottom:5px;">GLOW ≠ CAUTION</div>
+                <div style="font:400 11px/1.5 'Jost',sans-serif;color:#C9D4DF;">Cabin Glow #FFD9A8 is pale and desaturated; Caution Amber #FFB020 stays saturated and always carries the ▲ glyph + word. Reward light and warning light never share a shape.</div>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <div style="display:flex;align-items:baseline;gap:12px;border-bottom:1px solid #2A3138;padding-bottom:8px;margin-bottom:18px;">
+              <span style="font:600 11px 'IBM Plex Mono',monospace;color:#FFD9A8;">S-03</span>
+              <span style="font:600 13px 'Jost',sans-serif;letter-spacing:.22em;color:#F4F7FA;">CRAFT — LM-7 “SURVEYOR”</span>
+              <span style="font:400 11px 'IBM Plex Mono',monospace;color:#8A94A0;margin-left:auto;">SAME GEOMETRY AS 1a · RESTYLED INKS · RIM IS WORLD-LOCKED (SUN LEFT)</span>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:16px;">
+              <div style="border:1px solid #22282F;background:rgba(4,6,10,.6);padding:12px;">
+                <svg viewBox="-64 -64 128 128" style="width:100%;display:block;">
+                  <g transform="scale(0.82)"><use href="#tm-craft"></use></g>
+                </svg>
+                <div style="font:600 11px 'IBM Plex Mono',monospace;color:#FFD9A8;margin-top:8px;">ST-01 · COAST</div>
+                <div style="font:400 11px/1.5 'Jost',sans-serif;color:#8A94A0;margin-top:3px;">Engine null. Hull reads by sun-side rim, warm window, white decal — never by fill.</div>
+              </div>
+              <div style="border:1px solid #22282F;background:rgba(4,6,10,.6);padding:12px;">
+                <svg viewBox="-64 -64 128 128" style="width:100%;display:block;">
+                  <g transform="scale(0.82)"><use href="#tm-craft"></use><use href="#tm-flame"></use></g>
+                </svg>
+                <div style="font:600 11px 'IBM Plex Mono',monospace;color:#FFD9A8;">ST-02 · MAIN BURN</div>
+                <div style="font:400 11px/1.5 'Jost',sans-serif;color:#8A94A0;margin-top:3px;">Hydrolox plume: short, blue-white, shock diamond. Flame doubles as a lamp on gear and ground.</div>
+              </div>
+              <div style="border:1px solid #22282F;background:rgba(4,6,10,.6);padding:12px;">
+                <svg viewBox="-64 -64 128 128" style="width:100%;display:block;">
+                  <path d="M -32 -50 A 38 38 0 0 1 32 -50" fill="none" stroke="#8A94A0" stroke-width="1.5" stroke-dasharray="3 4"/>
+                  <polygon points="32,-50 26,-56 25,-47" fill="#8A94A0"/>
+                  <g transform="scale(0.82) rotate(14)">
+                    <use href="#tm-craft"></use>
+                    <use href="#tm-rcs" transform="translate(-27,-29) rotate(180)"></use>
+                  </g>
+                </svg>
+                <div style="font:600 11px 'IBM Plex Mono',monospace;color:#FFD9A8;">ST-03 · RCS ROTATE</div>
+                <div style="font:400 11px/1.5 'Jost',sans-serif;color:#8A94A0;margin-top:3px;">Pale cryo puff at cabin pod. Rim stays sun-locked — it counter-rotates against tilt.</div>
+              </div>
+              <div style="border:1px solid #22282F;background:rgba(4,6,10,.6);padding:12px;">
+                <svg viewBox="-64 -64 128 128" style="width:100%;display:block;">
+                  <line x1="-60" y1="21" x2="60" y2="21" stroke="#333B45" stroke-width="1.5"/>
+                  <line x1="-60" y1="21" x2="-18" y2="21" stroke="#E8E2D6" stroke-width="2"/>
+                  <g transform="scale(0.82)"><use href="#tm-craft"></use><use href="#fm-ring"></use></g>
+                </svg>
+                <div style="font:600 11px 'IBM Plex Mono',monospace;color:#2FE6A6;">ST-04 · DOWN &amp; SAFE</div>
+                <div style="font:400 11px/1.5 'Jost',sans-serif;color:#8A94A0;margin-top:3px;">Legs compress 2 px; shared teal survey ring pulses ×2, then holds. Craft casts a long shadow.</div>
+              </div>
+              <div style="border:1px solid #22282F;background:rgba(4,6,10,.6);padding:12px;">
+                <svg viewBox="-64 -64 128 128" style="width:100%;display:block;">
+                  <line x1="-60" y1="20" x2="60" y2="20" stroke="#333B45" stroke-width="1.5"/>
+                  <g transform="scale(0.82) translate(0,-4)"><use href="#tm-debris"></use></g>
+                </svg>
+                <div style="font:600 11px 'IBM Plex Mono',monospace;color:#FF4D5E;">ST-05 · LOSS OF VEHICLE</div>
+                <div style="font:400 11px/1.5 'Jost',sans-serif;color:#8A94A0;margin-top:3px;">Dark shards tumble rim-lit; red ✕ site marker; ejecta rays stay bright on shadow ground.</div>
+              </div>
+            </div>
+            <div style="font:400 12px/1.6 'IBM Plex Mono',monospace;color:#8A94A0;margin-top:14px;">
+              CONSTRUCTION — plates ≤ #2B323B over #10151B; 1.5 px gunmetal seams; ≥ 2 px Rim White on the sun side only. The warm window and white decal are the craft’s constant beacons: they guarantee acquisition even when the rim is edge-on.
+            </div>
+          </div>
+
+          <div>
+            <div style="display:flex;align-items:baseline;gap:12px;border-bottom:1px solid #2A3138;padding-bottom:8px;margin-bottom:18px;">
+              <span style="font:600 11px 'IBM Plex Mono',monospace;color:#FFD9A8;">S-04</span>
+              <span style="font:600 13px 'Jost',sans-serif;letter-spacing:.22em;color:#F4F7FA;">TERRAIN &amp; PADS</span>
+              <span style="font:400 11px 'IBM Plex Mono',monospace;color:#8A94A0;margin-left:auto;">SAME SITE AS 1a S-04 — RE-RENDERED AT LOCAL DAWN</span>
+            </div>
+            <div style="border:1px solid #22282F;background:#04060A;">
+              <svg viewBox="0 0 1240 240" style="width:100%;display:block;">
+                <rect width="1240" height="240" fill="#04060A"/>
+                <circle cx="180" cy="40" r="0.9" fill="#F4F7FA" opacity="0.35"/>
+                <circle cx="420" cy="62" r="1.1" fill="#F4F7FA" opacity="0.45"/>
+                <circle cx="700" cy="36" r="0.8" fill="#F4F7FA" opacity="0.3"/>
+                <circle cx="1150" cy="52" r="1" fill="#F4F7FA" opacity="0.4"/>
+                <line x1="0" y1="60" x2="1240" y2="97" stroke="#E8E2D6" stroke-width="1" stroke-opacity="0.15" stroke-dasharray="10 14"/>
+                <line x1="0" y1="84" x2="838" y2="109" stroke="#E8E2D6" stroke-width="1" stroke-opacity="0.15" stroke-dasharray="10 14"/>
+                <line x1="0" y1="112" x2="58" y2="114" stroke="#E8E2D6" stroke-width="1" stroke-opacity="0.2" stroke-dasharray="10 14"/>
+                <text x="8" y="52" fill="#E8E2D6" fill-opacity="0.7" style="font:500 10px 'IBM Plex Mono',monospace;">SUN — EL 2°</text>
+                <polygon fill="#10151B" points="0,150 60,118 125,162 200,132 255,170 300,148 340,148 500,148 560,178 620,152 690,186 760,140 820,158 900,95 1000,95 1060,130 1120,108 1180,142 1240,120 1240,240 0,240"/>
+                <polyline points="0,150 60,118 125,162 200,132 255,170 300,148 340,148 500,148 560,178 620,152 690,186 760,140 820,158 900,95 1000,95 1060,130 1120,108 1180,142 1240,120" fill="none" stroke="#333B45" stroke-width="1.25"/>
+                <line x1="0" y1="150" x2="60" y2="118" stroke="#E8E2D6" stroke-width="2.5"/>
+                <line x1="839" y1="143" x2="900" y2="95" stroke="#E8E2D6" stroke-width="2.5"/>
+                <rect x="900" y="95" width="100" height="9" fill="url(#tm-stipple)"/>
+                <line x1="900" y1="95" x2="1000" y2="95" stroke="#E8E2D6" stroke-width="2" stroke-opacity="0.55"/>
+                <line x1="70" y1="228" x2="820" y2="228" stroke="#5A646F" stroke-width="1" stroke-dasharray="2 4"/>
+                <line x1="70" y1="224" x2="70" y2="232" stroke="#5A646F" stroke-width="1"/>
+                <line x1="820" y1="224" x2="820" y2="232" stroke="#5A646F" stroke-width="1"/>
+                <text x="445" y="221" text-anchor="middle" fill="#5A646F" style="font:400 10px 'IBM Plex Mono',monospace;">CAST SHADOW — SUN OCCLUDED BY RIDGE A</text>
+                <line x1="340" y1="148" x2="500" y2="148" stroke="#2FE6A6" stroke-width="4"/>
+                <circle cx="344" cy="141" r="3" fill="#2FE6A6"/>
+                <circle cx="496" cy="141" r="3" fill="#2FE6A6"/>
+                <polyline points="368,156 374,161 380,156" fill="none" stroke="#2FE6A6" stroke-width="1.5"/>
+                <polyline points="404,156 410,161 416,156" fill="none" stroke="#2FE6A6" stroke-width="1.5"/>
+                <polyline points="440,156 446,161 452,156" fill="none" stroke="#2FE6A6" stroke-width="1.5"/>
+                <text x="420" y="182" text-anchor="middle" fill="#2FE6A6" fill-opacity="0.85" style="font:500 12px 'IBM Plex Mono',monospace;">PAD 1 · ×1 — SHADOWED, BEACON-LIT</text>
+                <line x1="900" y1="95" x2="1000" y2="95" stroke="#FFD9A8" stroke-width="4" stroke-opacity="0.9"/>
+                <circle cx="904" cy="88" r="3" fill="#FFD9A8"/>
+                <circle cx="996" cy="88" r="3" fill="#FFD9A8"/>
+                <line x1="1004" y1="95" x2="1004" y2="60" stroke="#FFD9A8" stroke-width="1.5"/>
+                <polygon points="1004,60 1030,67 1004,74" fill="#FFD9A8"/>
+                <text x="950" y="124" text-anchor="middle" fill="#FFD9A8" style="font:500 12px 'IBM Plex Mono',monospace;">PAD 2 · ×3 — SUNLIT</text>
+                <polygon points="690,140 698,154 682,154" fill="none" stroke="#FFB020" stroke-width="1.5"/>
+                <line x1="690" y1="145" x2="690" y2="149.5" stroke="#FFB020" stroke-width="1.5"/>
+                <circle cx="690" cy="152" r="0.9" fill="#FFB020"/>
+                <line x1="690" y1="158" x2="690" y2="180" stroke="#FFB020" stroke-width="1" stroke-dasharray="2 3"/>
+                <text x="690" y="132" text-anchor="middle" fill="#FFB020" style="font:400 11px 'IBM Plex Mono',monospace;">SLOPE 24° — NO LAND</text>
+                <line x1="24" y1="60" x2="24" y2="220" stroke="#5A646F" stroke-width="1"/>
+                <line x1="20" y1="60" x2="28" y2="60" stroke="#5A646F" stroke-width="1"/>
+                <line x1="20" y1="140" x2="28" y2="140" stroke="#5A646F" stroke-width="1"/>
+                <line x1="20" y1="220" x2="28" y2="220" stroke="#5A646F" stroke-width="1"/>
+                <text x="34" y="64" fill="#5A646F" style="font:400 10px 'IBM Plex Mono',monospace;">EL. +200M</text>
+                <text x="34" y="144" fill="#5A646F" style="font:400 10px 'IBM Plex Mono',monospace;">EL. +100M</text>
+                <text x="34" y="224" fill="#5A646F" style="font:400 10px 'IBM Plex Mono',monospace;">EL. 0</text>
+              </svg>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px 36px;font:400 12px/1.6 'Jost',sans-serif;color:#C9D4DF;margin-top:14px;">
+              <div>— Physically honest light: only faces tilted toward the 2° sun catch #E8E2D6; ridge A occludes the whole middle valley. No gradients, no ambient lift.</div>
+              <div>— Every contour keeps a #333B45 graphite hairline even in full shadow — terrain mass always separates from void (accessibility floor, see S-09).</div>
+              <div>— Pads keep 1a’s grammar: teal strip + beacons + chevrons = landable. In cast shadow the beacons are the pad — self-luminous signals over invisible rock.</div>
+              <div>— Bonus pad sits sunlit: Cabin Glow strip + pennant + ×3 numeral. Grazing-lit flats get a stipple band (#E8E2D6 dots), never a fill.</div>
+            </div>
+          </div>
+
+          <div>
+            <div style="display:flex;align-items:baseline;gap:12px;border-bottom:1px solid #2A3138;padding-bottom:8px;margin-bottom:18px;">
+              <span style="font:600 11px 'IBM Plex Mono',monospace;color:#FFD9A8;">S-05</span>
+              <span style="font:600 13px 'Jost',sans-serif;letter-spacing:.22em;color:#F4F7FA;">FX</span>
+              <span style="font:400 11px 'IBM Plex Mono',monospace;color:#8A94A0;margin-left:auto;">DECORATIVE ONLY — EVERY STATE CHANGE IS MIRRORED IN HUD TEXT</span>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;">
+              <div style="border:1px solid #22282F;background:rgba(4,6,10,.6);padding:14px;">
+                <svg viewBox="-70 30 150 130" style="width:100%;height:150px;display:block;">
+                  <g transform="translate(-30,0) scale(2)"><use href="#tm-flame"></use></g>
+                  <line x1="-24" y1="52" x2="4" y2="52" stroke="#8A94A0" stroke-width="0.75" stroke-dasharray="2 3"/>
+                  <text x="8" y="55" fill="#8A94A0" style="font:400 10px 'IBM Plex Mono',monospace;">CORE #F4F7FA</text>
+                  <line x1="-27" y1="73" x2="4" y2="73" stroke="#8A94A0" stroke-width="0.75" stroke-dasharray="2 3"/>
+                  <text x="8" y="76" fill="#8A94A0" style="font:400 10px 'IBM Plex Mono',monospace;">SHOCK DIAMOND #E8F3FF</text>
+                  <line x1="-19" y1="95" x2="4" y2="95" stroke="#8A94A0" stroke-width="0.75" stroke-dasharray="2 3"/>
+                  <text x="8" y="98" fill="#8A94A0" style="font:400 10px 'IBM Plex Mono',monospace;">BODY #CFE4FF 85%</text>
+                  <line x1="-30" y1="122" x2="4" y2="122" stroke="#8A94A0" stroke-width="0.75" stroke-dasharray="2 3"/>
+                  <text x="8" y="125" fill="#8A94A0" style="font:400 10px 'IBM Plex Mono',monospace;">PLUME #9CC7FF 35%</text>
+                </svg>
+                <div style="font:600 11px 'IBM Plex Mono',monospace;color:#FFD9A8;margin-top:6px;">FX-01 · CRYO FLAME</div>
+                <div style="font:400 11px/1.5 'Jost',sans-serif;color:#8A94A0;margin-top:3px;">Hydrolox burns short and near-transparent — hard polygons, no bloom. The flame is also a lamp: an 8% #CFE4FF pool lights gear and ground while burning.</div>
+              </div>
+              <div style="border:1px solid #22282F;background:rgba(4,6,10,.6);padding:14px;">
+                <svg viewBox="-70 -20 150 130" style="width:100%;height:150px;display:block;">
+                  <line x1="-62" y1="70" x2="72" y2="70" stroke="#333B45" stroke-width="1.5"/>
+                  <line x1="-62" y1="70" x2="-20" y2="70" stroke="#E8E2D6" stroke-width="2.5"/>
+                  <rect x="-62" y="40" width="42" height="30" fill="url(#tm-stipple)" opacity="0.5"/>
+                  <path d="M -4 68 Q -26 58 -52 64" fill="none" stroke="#5A646F" stroke-width="1" opacity="0.7"/>
+                  <path d="M 4 68 Q 26 58 52 64" fill="none" stroke="#5A646F" stroke-width="1" opacity="0.7"/>
+                  <circle cx="-36" cy="60" r="1.6" fill="#E8E2D6"/>
+                  <circle cx="-50" cy="62" r="1.4" fill="#E8E2D6"/>
+                  <circle cx="-22" cy="58" r="1.2" fill="#5A646F"/>
+                  <circle cx="22" cy="58" r="1.2" fill="#5A646F"/>
+                  <circle cx="38" cy="59" r="1" fill="#5A646F" opacity="0.7"/>
+                  <circle cx="14" cy="48" r="1" fill="#5A646F" opacity="0.6"/>
+                  <text x="-40" y="34" text-anchor="middle" fill="#8A94A0" style="font:400 9px 'IBM Plex Mono',monospace;">SUNLIT BAND</text>
+                </svg>
+                <div style="font:600 11px 'IBM Plex Mono',monospace;color:#FFD9A8;margin-top:6px;">FX-02 · DUST AT DAWN</div>
+                <div style="font:400 11px/1.5 'Jost',sans-serif;color:#8A94A0;margin-top:3px;">Motes are graphite in shadow and flash #E8E2D6 only while crossing a sunlit band — dust reveals the light. Ballistic settle in 400 ms; vacuum, no billowing.</div>
+              </div>
+              <div style="border:1px solid #22282F;background:rgba(4,6,10,.6);padding:14px;">
+                <svg viewBox="-70 -20 150 130" style="width:100%;height:150px;display:block;">
+                  <g transform="translate(0,48)">
+                    <circle cx="0" cy="0" r="24" fill="none" stroke="#FF4D5E" stroke-width="2"/>
+                    <line x1="0" y1="26" x2="0" y2="44" stroke="#E8E2D6" stroke-width="1.5"/>
+                    <line x1="14" y1="22" x2="30" y2="38" stroke="#E8E2D6" stroke-width="1.5"/>
+                    <line x1="-14" y1="22" x2="-30" y2="38" stroke="#E8E2D6" stroke-width="1.5"/>
+                    <polygon points="0,-30 5,-44 -5,-42" fill="#1A2028" stroke="#F4F7FA" stroke-width="1.5"/>
+                    <polygon points="26,-14 38,-20 36,-8" fill="#1A2028" stroke="#98A4B3" stroke-width="1.5"/>
+                    <polygon points="28,16 40,20 32,27" fill="#1A2028" stroke="#5A646F" stroke-width="1.5"/>
+                    <polygon points="-28,14 -40,18 -33,26" fill="#1A2028" stroke="#98A4B3" stroke-width="1.5"/>
+                    <polygon points="-26,-16 -38,-22 -35,-9" fill="#1A2028" stroke="#F4F7FA" stroke-width="1.5"/>
+                    <circle cx="14" cy="-34" r="1.4" fill="#FFD9A8"/>
+                    <circle cx="-16" cy="34" r="1.4" fill="#CFE4FF"/>
+                    <circle cx="42" cy="2" r="1.2" fill="#CFE4FF"/>
+                  </g>
+                </svg>
+                <div style="font:600 11px 'IBM Plex Mono',monospace;color:#FF4D5E;margin-top:6px;">FX-03 · LOSS OF VEHICLE</div>
+                <div style="font:400 11px/1.5 'Jost',sans-serif;color:#8A94A0;margin-top:3px;">120 ms red ring → dark shards tumble rim-lit, 600 ms → embers cool 2 s. Ejecta rays: bright on shadow ground, dark on sunlit. One 4 px shake, never more.</div>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <div style="display:flex;align-items:baseline;gap:12px;border-bottom:1px solid #2A3138;padding-bottom:8px;margin-bottom:18px;">
+              <span style="font:600 11px 'IBM Plex Mono',monospace;color:#FFD9A8;">S-06</span>
+              <span style="font:600 13px 'Jost',sans-serif;letter-spacing:.22em;color:#F4F7FA;">IN-GAME HUD — PRIMARY MOCKUP</span>
+              <span style="font:400 11px 'IBM Plex Mono',monospace;color:#8A94A0;margin-left:auto;">1280 × 720 @ 1× · SAME FLIGHT MOMENT AS 1a S-06 · BALLOONS ① – ⑤</span>
+            </div>
+
+            <div data-screen-label="2a — In-game HUD mockup (Terminator)" style="position:relative;width:1280px;height:720px;border:1px solid #22282F;overflow:hidden;background:#04060A;">
+              <svg viewBox="0 0 1280 720" style="position:absolute;inset:0;width:100%;height:100%;">
+                <circle cx="122" cy="30" r="0.9" fill="#F4F7FA" opacity="0.35"/>
+                <circle cx="212" cy="92" r="1.3" fill="#F4F7FA" opacity="0.55"/>
+                <circle cx="412" cy="142" r="1" fill="#F4F7FA" opacity="0.4"/>
+                <circle cx="502" cy="42" r="1.2" fill="#F4F7FA" opacity="0.5"/>
+                <circle cx="662" cy="64" r="1.1" fill="#F4F7FA" opacity="0.45"/>
+                <circle cx="822" cy="44" r="1.3" fill="#F4F7FA" opacity="0.55"/>
+                <circle cx="1002" cy="64" r="1.1" fill="#F4F7FA" opacity="0.45"/>
+                <circle cx="1152" cy="44" r="1" fill="#F4F7FA" opacity="0.4"/>
+                <circle cx="182" cy="222" r="1.1" fill="#F4F7FA" opacity="0.4"/>
+                <circle cx="392" cy="242" r="1" fill="#F4F7FA" opacity="0.35"/>
+                <circle cx="642" cy="262" r="1.1" fill="#F4F7FA" opacity="0.4"/>
+                <circle cx="882" cy="192" r="1.2" fill="#F4F7FA" opacity="0.45"/>
+                <circle cx="1102" cy="202" r="1" fill="#F4F7FA" opacity="0.35"/>
+                <circle cx="322" cy="302" r="0.8" fill="#F4F7FA" opacity="0.3"/>
+                <circle cx="702" cy="322" r="0.9" fill="#F4F7FA" opacity="0.3"/>
+                <circle cx="952" cy="302" r="1.1" fill="#F4F7FA" opacity="0.4"/>
+                <line x1="0" y1="336" x2="1280" y2="374" stroke="#E8E2D6" stroke-width="1" stroke-opacity="0.1" stroke-dasharray="12 18"/>
+                <line x1="0" y1="398" x2="700" y2="419" stroke="#E8E2D6" stroke-width="1" stroke-opacity="0.12" stroke-dasharray="12 18"/>
+                <path d="M 585 300 Q 545 430 440 532" fill="none" stroke="#5A646F" stroke-width="1.5" stroke-dasharray="1.5 7" opacity="0.9"><animate attributeName="stroke-dashoffset" dur="0.9s" repeatCount="indefinite" values="0;-8.5"/></path>
+                <circle cx="436" cy="540" r="4.5" fill="none" stroke="#2FE6A6" stroke-width="1.5"/>
+                <line x1="436" y1="531" x2="436" y2="549" stroke="#2FE6A6" stroke-width="1"/>
+                <line x1="427" y1="540" x2="445" y2="540" stroke="#2FE6A6" stroke-width="1"/>
+                <polygon fill="#10151B" points="0,470 70,430 130,500 200,455 260,520 340,540 520,540 600,490 650,510 720,440 780,470 840,455 950,430 1060,430 1120,470 1180,440 1280,500 1280,720 0,720"/>
+                <polyline points="0,470 70,430 130,500 200,455 260,520 340,540 520,540 600,490 650,510 720,440 780,470 840,455 950,430 1060,430 1120,470 1180,440 1280,500" fill="none" stroke="#333B45" stroke-width="1.5"/>
+                <line x1="0" y1="470" x2="70" y2="430" stroke="#E8E2D6" stroke-width="2.5"/>
+                <line x1="664" y1="449" x2="720" y2="440" stroke="#E8E2D6" stroke-width="2.5"/>
+                <line x1="876" y1="447" x2="950" y2="430" stroke="#E8E2D6" stroke-width="2.5"/>
+                <rect x="950" y="430" width="110" height="9" fill="url(#tm-stipple)"/>
+                <line x1="340" y1="540" x2="520" y2="540" stroke="#2FE6A6" stroke-width="4"/>
+                <circle cx="344" cy="533" r="3.5" fill="#2FE6A6"><animate attributeName="opacity" dur="1.6s" repeatCount="indefinite" values="1;0.3;1"/></circle>
+                <circle cx="516" cy="533" r="3.5" fill="#2FE6A6"><animate attributeName="opacity" dur="1.6s" begin="0.4s" repeatCount="indefinite" values="1;0.3;1"/></circle>
+                <polyline points="368,547 375,553 382,547" fill="none" stroke="#2FE6A6" stroke-width="1.5"/>
+                <polyline points="404,547 411,553 418,547" fill="none" stroke="#2FE6A6" stroke-width="1.5"/>
+                <polyline points="440,547 447,553 454,547" fill="none" stroke="#2FE6A6" stroke-width="1.5"/>
+                <polyline points="476,547 483,553 490,547" fill="none" stroke="#2FE6A6" stroke-width="1.5"/>
+                <text x="430" y="572" text-anchor="middle" fill="#2FE6A6" fill-opacity="0.85" style="font:500 12px 'IBM Plex Mono',monospace;">PAD 1 · ×1</text>
+                <line x1="950" y1="430" x2="1060" y2="430" stroke="#FFD9A8" stroke-width="4" stroke-opacity="0.9"/>
+                <circle cx="954" cy="423" r="3.5" fill="#FFD9A8"><animate attributeName="opacity" dur="1.6s" begin="0.8s" repeatCount="indefinite" values="1;0.3;1"/></circle>
+                <circle cx="1056" cy="423" r="3.5" fill="#FFD9A8"><animate attributeName="opacity" dur="1.6s" begin="1.2s" repeatCount="indefinite" values="1;0.3;1"/></circle>
+                <line x1="1063" y1="430" x2="1063" y2="396" stroke="#FFD9A8" stroke-width="1.5"/>
+                <polygon points="1063,396 1088,403 1063,410" fill="#FFD9A8"/>
+                <text x="1005" y="456" text-anchor="middle" fill="#FFD9A8" style="font:500 12px 'IBM Plex Mono',monospace;">PAD 2 · ×3</text>
+                <g transform="translate(585,275) rotate(-4) scale(1.35)"><use href="#tm-craft"></use><use href="#tm-flame"></use></g>
+              </svg>
+
+              <div style="position:absolute;left:24px;top:22px;">
+                <div style="display:flex;align-items:baseline;gap:10px;">
+                  <span style="font:600 11px 'Jost',sans-serif;letter-spacing:.18em;color:#8A94A0;">FUEL</span>
+                  <span style="font:600 20px 'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums;color:#F4F7FA;">41%</span>
+                </div>
+                <div style="position:relative;height:5px;width:170px;border:1px solid rgba(244,247,250,.3);margin-top:5px;">
+                  <div style="position:absolute;left:0;top:0;bottom:0;width:41%;background:#F4F7FA;"></div>
+                  <div style="position:absolute;left:25%;top:-3px;bottom:-3px;width:2px;background:#FFB020;"></div>
+                </div>
+                <div style="display:flex;align-items:baseline;gap:10px;margin-top:12px;">
+                  <span style="font:600 11px 'Jost',sans-serif;letter-spacing:.18em;color:#8A94A0;">THR</span>
+                  <span style="font:600 20px 'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums;color:#FFB020;">70%</span>
+                </div>
+                <div style="display:flex;gap:3px;margin-top:5px;width:170px;">
+                  <div style="flex:1;height:5px;background:#FFB020;"></div>
+                  <div style="flex:1;height:5px;background:#FFB020;"></div>
+                  <div style="flex:1;height:5px;background:#FFB020;"></div>
+                  <div style="flex:1;height:5px;background:#FFB020;"></div>
+                  <div style="flex:1;height:5px;background:#FFB020;"></div>
+                  <div style="flex:1;height:5px;background:#FFB020;"></div>
+                  <div style="flex:1;height:5px;background:#FFB020;"></div>
+                  <div style="flex:1;height:5px;background:rgba(244,247,250,.14);"></div>
+                  <div style="flex:1;height:5px;background:rgba(244,247,250,.14);"></div>
+                  <div style="flex:1;height:5px;background:rgba(244,247,250,.14);"></div>
+                </div>
+              </div>
+
+              <div style="position:absolute;left:50%;top:22px;transform:translateX(-50%);text-align:center;">
+                <div style="font:600 10px 'Jost',sans-serif;letter-spacing:.24em;color:#8A94A0;">SCORE</div>
+                <div style="font:600 24px 'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums;color:#FFD9A8;letter-spacing:.06em;">03 250</div>
+                <div style="font:400 11px 'IBM Plex Mono',monospace;color:#8A94A0;margin-top:2px;">T+ 00:47</div>
+              </div>
+
+              <div style="position:absolute;right:24px;top:22px;width:290px;">
+                <div style="display:grid;grid-template-columns:44px 1fr 104px;gap:0 10px;align-items:center;">
+                  <span style="font:600 11px 'Jost',sans-serif;letter-spacing:.14em;color:#8A94A0;padding:5px 0;">ALT</span>
+                  <span style="font:600 21px 'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums;text-align:right;color:#F4F7FA;">128 <span style="font-size:12px;color:#8A94A0;">M</span></span>
+                  <span style="font:400 10px 'IBM Plex Mono',monospace;color:#8A94A0;text-align:right;">AGL</span>
+                  <span style="grid-column:1 / -1;height:1px;background:rgba(244,247,250,.12);"></span>
+                  <span style="font:600 11px 'Jost',sans-serif;letter-spacing:.14em;color:#8A94A0;padding:5px 0;">V/S</span>
+                  <span style="font:600 21px 'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums;text-align:right;color:#FF4D5E;">-3.4 <span style="font-size:12px;color:#8A94A0;">M/S</span></span>
+                  <span style="font:600 11px 'IBM Plex Mono',monospace;color:#FF4D5E;text-align:right;">✕ MAX 2.5</span>
+                  <span style="grid-column:1 / -1;height:1px;background:rgba(244,247,250,.12);"></span>
+                  <span style="font:600 11px 'Jost',sans-serif;letter-spacing:.14em;color:#8A94A0;padding:5px 0;">H/S</span>
+                  <span style="font:600 21px 'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums;text-align:right;color:#F4F7FA;">+0.6 <span style="font-size:12px;color:#8A94A0;">M/S</span></span>
+                  <span style="font:600 11px 'IBM Plex Mono',monospace;color:#2FE6A6;text-align:right;">● MAX 1.5</span>
+                  <span style="grid-column:1 / -1;height:1px;background:rgba(244,247,250,.12);"></span>
+                  <span style="font:600 11px 'Jost',sans-serif;letter-spacing:.14em;color:#8A94A0;padding:5px 0;">TILT</span>
+                  <span style="font:600 21px 'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums;text-align:right;color:#F4F7FA;">4°</span>
+                  <span style="font:600 11px 'IBM Plex Mono',monospace;color:#2FE6A6;text-align:right;">● MAX 8°</span>
+                </div>
+              </div>
+
+              <div style="position:absolute;left:50%;bottom:76px;transform:translateX(-50%);background:rgba(4,6,10,.55);padding:5px 14px 7px;border-bottom:1px solid #FF4D5E;font:600 13px 'IBM Plex Mono',monospace;letter-spacing:.12em;color:#FF4D5E;">✕ NO-GO — REDUCE SINK RATE</div>
+
+              <div style="position:absolute;left:250px;top:26px;width:20px;height:20px;border:1px solid #FFD9A8;border-radius:50%;background:rgba(4,6,10,.85);display:flex;align-items:center;justify-content:center;font:600 11px 'IBM Plex Mono',monospace;color:#FFD9A8;">1</div>
+              <div style="position:absolute;left:724px;top:26px;width:20px;height:20px;border:1px solid #FFD9A8;border-radius:50%;background:rgba(4,6,10,.85);display:flex;align-items:center;justify-content:center;font:600 11px 'IBM Plex Mono',monospace;color:#FFD9A8;">2</div>
+              <div style="position:absolute;right:326px;top:26px;width:20px;height:20px;border:1px solid #FFD9A8;border-radius:50%;background:rgba(4,6,10,.85);display:flex;align-items:center;justify-content:center;font:600 11px 'IBM Plex Mono',monospace;color:#FFD9A8;">3</div>
+              <div style="position:absolute;left:497px;top:412px;width:20px;height:20px;border:1px solid #FFD9A8;border-radius:50%;background:rgba(4,6,10,.85);display:flex;align-items:center;justify-content:center;font:600 11px 'IBM Plex Mono',monospace;color:#FFD9A8;">4</div>
+              <div style="position:absolute;left:300px;top:520px;width:20px;height:20px;border:1px solid #FFD9A8;border-radius:50%;background:rgba(4,6,10,.85);display:flex;align-items:center;justify-content:center;font:600 11px 'IBM Plex Mono',monospace;color:#FFD9A8;">5</div>
+            </div>
+
+            <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:16px;margin-top:16px;">
+              <div style="display:flex;gap:9px;align-items:flex-start;">
+                <span style="flex:none;width:18px;height:18px;border:1px solid #FFD9A8;border-radius:50%;display:flex;align-items:center;justify-content:center;font:600 10px 'IBM Plex Mono',monospace;color:#FFD9A8;">1</span>
+                <span style="font:400 11.5px/1.5 'Jost',sans-serif;color:#C9D4DF;">CONSUMABLES — no panel boxes: type floats on void. Hairline fuel bar; thrust ticks go amber only while burning.</span>
+              </div>
+              <div style="display:flex;gap:9px;align-items:flex-start;">
+                <span style="flex:none;width:18px;height:18px;border:1px solid #FFD9A8;border-radius:50%;display:flex;align-items:center;justify-content:center;font:600 10px 'IBM Plex Mono',monospace;color:#FFD9A8;">2</span>
+                <span style="font:400 11.5px/1.5 'Jost',sans-serif;color:#C9D4DF;">SCORE — the HUD’s only warm light: Cabin Glow, tabular mono, same hue as the window you’re protecting.</span>
+              </div>
+              <div style="display:flex;gap:9px;align-items:flex-start;">
+                <span style="flex:none;width:18px;height:18px;border:1px solid #FFD9A8;border-radius:50%;display:flex;align-items:center;justify-content:center;font:600 10px 'IBM Plex Mono',monospace;color:#FFD9A8;">3</span>
+                <span style="font:400 11.5px/1.5 'Jost',sans-serif;color:#C9D4DF;">TELEMETRY — hairline-ruled rows, right-aligned tabular values; status is inline glyph + word, no chip boxes in-game.</span>
+              </div>
+              <div style="display:flex;gap:9px;align-items:flex-start;">
+                <span style="flex:none;width:18px;height:18px;border:1px solid #FFD9A8;border-radius:50%;display:flex;align-items:center;justify-content:center;font:600 10px 'IBM Plex Mono',monospace;color:#FFD9A8;">4</span>
+                <span style="font:400 11.5px/1.5 'Jost',sans-serif;color:#C9D4DF;">PREDICTED PATH — graphite dots + teal impact crosshair; advisory stays monochrome, never signal-colored.</span>
+              </div>
+              <div style="display:flex;gap:9px;align-items:flex-start;">
+                <span style="flex:none;width:18px;height:18px;border:1px solid #FFD9A8;border-radius:50%;display:flex;align-items:center;justify-content:center;font:600 10px 'IBM Plex Mono',monospace;color:#FFD9A8;">5</span>
+                <span style="font:400 11.5px/1.5 'Jost',sans-serif;color:#C9D4DF;">PADS — shadowed pads live entirely by teal beacons; the sunlit bonus pad is a Cabin Glow strip + pennant.</span>
+              </div>
+            </div>
+
+            <div style="display:flex;align-items:center;gap:18px;border:1px dashed #2A3138;padding:14px 18px;margin-top:16px;flex-wrap:wrap;">
+              <span style="font:600 11px 'Jost',sans-serif;letter-spacing:.18em;color:#8A94A0;">CHIP LOGIC — SHARED WITH 1a</span>
+              <span style="font:600 12px 'IBM Plex Mono',monospace;color:#2FE6A6;">● GO — ≤ 80% OF LIMIT</span>
+              <span style="font:600 12px 'IBM Plex Mono',monospace;color:#FFB020;">▲ CAUTION — 80–100%</span>
+              <span style="font:600 12px 'IBM Plex Mono',monospace;color:#FF4D5E;">✕ EXCEED — OVER LIMIT</span>
+              <span style="font:400 11.5px 'Jost',sans-serif;color:#8A94A0;">Inline glyph + word in the HUD; outlined chip boxes appear only on terminal cards.</span>
+            </div>
+          </div>
+
+          <div>
+            <div style="display:flex;align-items:baseline;gap:12px;border-bottom:1px solid #2A3138;padding-bottom:8px;margin-bottom:18px;">
+              <span style="font:600 11px 'IBM Plex Mono',monospace;color:#FFD9A8;">S-07</span>
+              <span style="font:600 13px 'Jost',sans-serif;letter-spacing:.22em;color:#F4F7FA;">TERMINAL SCREENS</span>
+            </div>
+            <div style="display:flex;gap:40px;">
+              <div data-screen-label="2a — Landing success screen" style="position:relative;width:620px;height:400px;border:1px solid #22282F;overflow:hidden;background:#04060A;">
+                <svg viewBox="0 0 620 400" style="position:absolute;inset:0;width:100%;height:100%;">
+                  <circle cx="80" cy="60" r="1" fill="#F4F7FA" opacity="0.4"/>
+                  <circle cx="240" cy="40" r="0.9" fill="#F4F7FA" opacity="0.3"/>
+                  <circle cx="420" cy="70" r="1.1" fill="#F4F7FA" opacity="0.45"/>
+                  <circle cx="540" cy="45" r="0.8" fill="#F4F7FA" opacity="0.3"/>
+                  <polygon fill="#10151B" points="0,310 80,278 160,316 240,296 380,296 460,310 540,280 620,306 620,400 0,400"/>
+                  <polyline points="0,310 80,278 160,316 240,296 380,296 460,310 540,280 620,306" fill="none" stroke="#333B45" stroke-width="1.5"/>
+                  <line x1="0" y1="310" x2="80" y2="278" stroke="#E8E2D6" stroke-width="2.5"/>
+                  <line x1="460" y1="310" x2="540" y2="280" stroke="#E8E2D6" stroke-width="2.5"/>
+                  <line x1="240" y1="296" x2="380" y2="296" stroke="#2FE6A6" stroke-width="3.5"/>
+                  <circle cx="244" cy="290" r="3" fill="#2FE6A6"/>
+                  <circle cx="376" cy="290" r="3" fill="#2FE6A6"/>
+                  <ellipse cx="345" cy="298" rx="26" ry="3" fill="#000000" opacity="0.75"/>
+                  <g transform="translate(310,273) scale(0.9)"><use href="#tm-craft"></use><use href="#fm-ring"></use></g>
+                </svg>
+                <div style="position:absolute;left:50%;top:34px;transform:translateX(-50%);width:400px;background:rgba(4,6,10,0.94);border:1px solid rgba(244,247,250,.28);padding:20px 24px;">
+                  <div style="position:absolute;right:14px;top:12px;border:1.5px solid #2FE6A6;color:#2FE6A6;font:600 10.5px 'IBM Plex Mono',monospace;letter-spacing:.14em;padding:3px 8px;transform:rotate(-7deg);opacity:.85;">NOMINAL</div>
+                  <div style="font:700 19px 'Jost',sans-serif;letter-spacing:.14em;color:#2FE6A6;">TOUCHDOWN CONFIRMED</div>
+                  <div style="font:400 11px 'IBM Plex Mono',monospace;color:#8A94A0;margin:3px 0 14px;">SITE: MARE SERENITATIS · PAD 2 · T+ 01:58 · LOCAL DAWN</div>
+                  <div style="display:grid;grid-template-columns:1fr auto auto;gap:5px 14px;font:500 13px 'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums;color:#F4F7FA;">
+                    <span style="color:#8A94A0;">V/S AT CONTACT</span><span style="text-align:right;">1.8 M/S</span><span style="color:#2FE6A6;">● PASS</span>
+                    <span style="color:#8A94A0;">TILT AT CONTACT</span><span style="text-align:right;">2.6°</span><span style="color:#2FE6A6;">● PASS</span>
+                    <span style="color:#8A94A0;">FUEL REMAINING</span><span style="text-align:right;">27%</span><span style="color:#8A94A0;">→ BONUS</span>
+                  </div>
+                  <div style="height:1px;background:rgba(244,247,250,.15);margin:13px 0;"></div>
+                  <div style="display:grid;grid-template-columns:1fr auto;gap:5px 14px;font:500 13px 'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums;color:#F4F7FA;">
+                    <span style="color:#8A94A0;">BASE LANDING</span><span style="text-align:right;">1 000</span>
+                    <span style="color:#8A94A0;">PAD MULTIPLIER ×3</span><span style="text-align:right;">3 000</span>
+                    <span style="color:#8A94A0;">FUEL BONUS 27% × 20</span><span style="text-align:right;">+ 540</span>
+                    <span style="color:#FFD9A8;font-weight:600;">TOTAL</span><span style="text-align:right;color:#FFD9A8;font-weight:600;font-size:16px;">3 540</span>
+                  </div>
+                  <div style="font:500 11px 'Jost',sans-serif;letter-spacing:.16em;color:#8A94A0;margin-top:14px;">ENTER — NEXT SITE&nbsp;&nbsp;·&nbsp;&nbsp;R — RE-FLY</div>
+                </div>
+              </div>
+
+              <div data-screen-label="2a — Crash / mishap screen" style="position:relative;width:620px;height:400px;border:1px solid #22282F;overflow:hidden;background:#04060A;">
+                <svg viewBox="0 0 620 400" style="position:absolute;inset:0;width:100%;height:100%;">
+                  <circle cx="100" cy="50" r="1" fill="#F4F7FA" opacity="0.4"/>
+                  <circle cx="300" cy="36" r="0.9" fill="#F4F7FA" opacity="0.3"/>
+                  <circle cx="480" cy="64" r="1.1" fill="#F4F7FA" opacity="0.45"/>
+                  <polygon fill="#10151B" points="0,300 90,270 170,312 250,292 390,292 470,308 550,278 620,300 620,400 0,400"/>
+                  <polyline points="0,300 90,270 170,312 250,292 390,292 470,308 550,278 620,300" fill="none" stroke="#333B45" stroke-width="1.5"/>
+                  <line x1="0" y1="300" x2="90" y2="270" stroke="#E8E2D6" stroke-width="2.5"/>
+                  <line x1="470" y1="308" x2="550" y2="278" stroke="#E8E2D6" stroke-width="2.5"/>
+                  <line x1="250" y1="292" x2="390" y2="292" stroke="#2FE6A6" stroke-width="3.5" opacity="0.4"/>
+                  <line x1="290" y1="292" x2="350" y2="292" stroke="#E8E2D6" stroke-width="1.5"/>
+                  <line x1="296" y1="288" x2="332" y2="274" stroke="#E8E2D6" stroke-width="1.5"/>
+                  <line x1="336" y1="288" x2="368" y2="278" stroke="#E8E2D6" stroke-width="1.5"/>
+                  <g transform="translate(320,268) scale(0.9)"><use href="#tm-debris"></use></g>
+                </svg>
+                <div style="position:absolute;left:50%;top:34px;transform:translateX(-50%);width:400px;background:rgba(4,6,10,0.94);border:1px solid rgba(244,247,250,.28);padding:20px 24px;">
+                  <div style="position:absolute;right:14px;top:12px;border:1.5px solid #FF4D5E;color:#FF4D5E;font:600 10.5px 'IBM Plex Mono',monospace;letter-spacing:.14em;padding:3px 8px;transform:rotate(-7deg);opacity:.85;">MISHAP RPT</div>
+                  <div style="font:700 19px 'Jost',sans-serif;letter-spacing:.14em;color:#FF4D5E;">VEHICLE LOST</div>
+                  <div style="font:400 11px 'IBM Plex Mono',monospace;color:#8A94A0;margin:3px 0 14px;">TELEMETRY ENDS T+ 01:22 · SITE: MARE SERENITATIS</div>
+                  <div style="display:grid;grid-template-columns:1fr auto auto;gap:5px 14px;font:500 13px 'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums;color:#F4F7FA;">
+                    <span style="color:#8A94A0;">IMPACT VELOCITY</span><span style="text-align:right;color:#FF4D5E;">6.4 M/S</span><span style="color:#FF4D5E;">✕ MAX 2.5</span>
+                    <span style="color:#8A94A0;">TILT AT IMPACT</span><span style="text-align:right;color:#FF4D5E;">21°</span><span style="color:#FF4D5E;">✕ MAX 8°</span>
+                    <span style="color:#8A94A0;">CAUSE</span><span style="text-align:right;grid-column:span 2;">EXCESS SINK RATE</span>
+                  </div>
+                  <div style="height:1px;background:rgba(244,247,250,.15);margin:13px 0;"></div>
+                  <div style="display:grid;grid-template-columns:1fr auto;gap:5px 14px;font:500 13px 'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums;color:#F4F7FA;">
+                    <span style="color:#8A94A0;">SCORE RETAINED</span><span style="text-align:right;">3 250</span>
+                    <span style="color:#8A94A0;">CRAFT REMAINING</span><span style="text-align:right;">2</span>
+                  </div>
+                  <div style="font:500 11px 'Jost',sans-serif;letter-spacing:.16em;color:#8A94A0;margin-top:14px;">R — RE-FLY&nbsp;&nbsp;·&nbsp;&nbsp;TAB — SITE MAP</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <div style="display:flex;align-items:baseline;gap:12px;border-bottom:1px solid #2A3138;padding-bottom:8px;margin-bottom:18px;">
+              <span style="font:600 11px 'IBM Plex Mono',monospace;color:#FFD9A8;">S-08</span>
+              <span style="font:600 13px 'Jost',sans-serif;letter-spacing:.22em;color:#F4F7FA;">TYPOGRAPHY &amp; ICONOGRAPHY</span>
+              <span style="font:400 11px 'IBM Plex Mono',monospace;color:#8A94A0;margin-left:auto;">FAMILIES SHARED WITH 1a — HIERARCHY BY WEIGHT + SPACE, NEVER BOXES</span>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;">
+              <div style="border:1px solid #22282F;background:rgba(4,6,10,.6);padding:18px 20px;">
+                <div style="font:600 10px 'IBM Plex Mono',monospace;letter-spacing:.2em;color:#FFD9A8;margin-bottom:12px;">TYPE-01 · JOST — LABELS &amp; HEADERS</div>
+                <div style="font:700 26px 'Jost',sans-serif;letter-spacing:.12em;color:#F4F7FA;">TERMINATOR</div>
+                <div style="font:600 13px 'Jost',sans-serif;letter-spacing:.22em;color:#C9D4DF;margin-top:8px;">PANEL LABEL 13/600 +.22EM</div>
+                <div style="font:600 11px 'Jost',sans-serif;letter-spacing:.18em;color:#8A94A0;margin-top:6px;">HUD LABEL 11/600 +.18EM</div>
+                <div style="font:400 13.5px/1.55 'Jost',sans-serif;color:#C9D4DF;margin-top:10px;">Same voice as 1a. On void, labels drop to Vellum Gray so values own the light.</div>
+              </div>
+              <div style="border:1px solid #22282F;background:rgba(4,6,10,.6);padding:18px 20px;">
+                <div style="font:600 10px 'IBM Plex Mono',monospace;letter-spacing:.2em;color:#FFD9A8;margin-bottom:12px;">TYPE-02 · IBM PLEX MONO — TELEMETRY</div>
+                <div style="font:600 28px 'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums;color:#F4F7FA;">0123456789</div>
+                <div style="font:600 20px 'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums;color:#C9D4DF;margin-top:6px;">-3.4 M/S · 128 M · ×3</div>
+                <div style="font:400 13.5px/1.55 'Jost',sans-serif;color:#C9D4DF;margin-top:10px;">Values #F4F7FA · labels #8A94A0 · score #FFD9A8. Tabular-nums, 600 weight, 20–24 px in HUD — unchanged from 1a.</div>
+              </div>
+              <div style="border:1px solid #22282F;background:rgba(4,6,10,.6);padding:18px 20px;">
+                <div style="font:600 10px 'IBM Plex Mono',monospace;letter-spacing:.2em;color:#FFD9A8;margin-bottom:14px;">ICON-01 · INSTRUMENT GLYPHS — SHARED SET</div>
+                <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px 8px;">
+                  <div style="display:flex;flex-direction:column;align-items:center;gap:5px;">
+                    <svg viewBox="0 0 24 24" style="width:26px;height:26px;"><rect x="6" y="4" width="12" height="16" fill="none" stroke="#F4F7FA" stroke-width="2"/><line x1="6" y1="13" x2="18" y2="13" stroke="#F4F7FA" stroke-width="2"/></svg>
+                    <span style="font:400 9.5px 'IBM Plex Mono',monospace;color:#8A94A0;">FUEL</span>
+                  </div>
+                  <div style="display:flex;flex-direction:column;align-items:center;gap:5px;">
+                    <svg viewBox="0 0 24 24" style="width:26px;height:26px;"><polygon points="12,4 19,20 5,20" fill="none" stroke="#F4F7FA" stroke-width="2"/></svg>
+                    <span style="font:400 9.5px 'IBM Plex Mono',monospace;color:#8A94A0;">THRUST</span>
+                  </div>
+                  <div style="display:flex;flex-direction:column;align-items:center;gap:5px;">
+                    <svg viewBox="0 0 24 24" style="width:26px;height:26px;"><line x1="12" y1="4" x2="12" y2="15" stroke="#F4F7FA" stroke-width="2"/><polyline points="7,11 12,17 17,11" fill="none" stroke="#F4F7FA" stroke-width="2"/></svg>
+                    <span style="font:400 9.5px 'IBM Plex Mono',monospace;color:#8A94A0;">V/S</span>
+                  </div>
+                  <div style="display:flex;flex-direction:column;align-items:center;gap:5px;">
+                    <svg viewBox="0 0 24 24" style="width:26px;height:26px;"><line x1="4" y1="12" x2="15" y2="12" stroke="#F4F7FA" stroke-width="2"/><polyline points="11,7 17,12 11,17" fill="none" stroke="#F4F7FA" stroke-width="2"/></svg>
+                    <span style="font:400 9.5px 'IBM Plex Mono',monospace;color:#8A94A0;">H/S</span>
+                  </div>
+                  <div style="display:flex;flex-direction:column;align-items:center;gap:5px;">
+                    <svg viewBox="0 0 24 24" style="width:26px;height:26px;"><circle cx="12" cy="13" r="7" fill="none" stroke="#F4F7FA" stroke-width="2"/><line x1="12" y1="13" x2="17" y2="8" stroke="#F4F7FA" stroke-width="2"/><line x1="12" y1="3" x2="12" y2="6" stroke="#F4F7FA" stroke-width="2"/></svg>
+                    <span style="font:400 9.5px 'IBM Plex Mono',monospace;color:#8A94A0;">TILT</span>
+                  </div>
+                  <div style="display:flex;flex-direction:column;align-items:center;gap:5px;">
+                    <svg viewBox="0 0 24 24" style="width:26px;height:26px;"><polygon points="12,4 21,20 3,20" fill="none" stroke="#FFB020" stroke-width="2"/><line x1="12" y1="10" x2="12" y2="15" stroke="#FFB020" stroke-width="2"/><circle cx="12" cy="17.6" r="1" fill="#FFB020"/></svg>
+                    <span style="font:400 9.5px 'IBM Plex Mono',monospace;color:#8A94A0;">CAUTION</span>
+                  </div>
+                  <div style="display:flex;flex-direction:column;align-items:center;gap:5px;">
+                    <svg viewBox="0 0 24 24" style="width:26px;height:26px;"><polygon points="8.5,4 15.5,4 20,8.5 20,15.5 15.5,20 8.5,20 4,15.5 4,8.5" fill="none" stroke="#FF4D5E" stroke-width="2"/><line x1="9" y1="9" x2="15" y2="15" stroke="#FF4D5E" stroke-width="2"/><line x1="15" y1="9" x2="9" y2="15" stroke="#FF4D5E" stroke-width="2"/></svg>
+                    <span style="font:400 9.5px 'IBM Plex Mono',monospace;color:#8A94A0;">ABORT</span>
+                  </div>
+                  <div style="display:flex;flex-direction:column;align-items:center;gap:5px;">
+                    <svg viewBox="0 0 24 24" style="width:26px;height:26px;"><circle cx="12" cy="12" r="8" fill="none" stroke="#2FE6A6" stroke-width="2"/><polyline points="8,12.5 11,15.5 16.5,9.5" fill="none" stroke="#2FE6A6" stroke-width="2"/></svg>
+                    <span style="font:400 9.5px 'IBM Plex Mono',monospace;color:#8A94A0;">GO</span>
+                  </div>
+                </div>
+                <div style="font:400 11.5px/1.5 'Jost',sans-serif;color:#8A94A0;margin-top:12px;">The same 24 px pen as 1a — one icon set serves both directions; only the ink changes to Rim White.</div>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <div style="display:flex;align-items:baseline;gap:12px;border-bottom:1px solid #2A3138;padding-bottom:8px;margin-bottom:18px;">
+              <span style="font:600 11px 'IBM Plex Mono',monospace;color:#FFD9A8;">S-09</span>
+              <span style="font:600 13px 'Jost',sans-serif;letter-spacing:.22em;color:#F4F7FA;">ACCESSIBILITY &amp; RISK LEDGER</span>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;font:400 12px/1.65 'Jost',sans-serif;color:#C9D4DF;">
+              <div style="border:1px solid #22282F;padding:14px 16px;">
+                <div style="font:600 10px 'IBM Plex Mono',monospace;letter-spacing:.18em;color:#FFD9A8;margin-bottom:8px;">CONTRAST ON VOID</div>
+                RIM WHITE 18.6:1 · SUNLIT 16.2:1 · CABIN GLOW 14.2:1 · TEAL 12.1:1 · AMBER 10.9:1 · VELLUM GRAY 7.4:1 · ABORT RED 5.7:1 — red at ≥ 12 px / 600, always with glyph + word.
+              </div>
+              <div style="border:1px solid #22282F;padding:14px 16px;">
+                <div style="font:600 10px 'IBM Plex Mono',monospace;letter-spacing:.18em;color:#FFD9A8;margin-bottom:8px;">RISK — DARK CRAFT</div>
+                Acquisition costs ~20% vs 1a at small sprite sizes. Mitigations: rim ≥ 2 px, always-on window glow, white retro decal, flame/RCS light. If a playtest still fails, fall back to 1a’s ink-stroke craft.
+              </div>
+              <div style="border:1px solid #22282F;padding:14px 16px;">
+                <div style="font:600 10px 'IBM Plex Mono',monospace;letter-spacing:.18em;color:#FFD9A8;margin-bottom:8px;">RISK — SHADOW TERRAIN</div>
+                Rock in cast shadow is near-invisible by design; the graphite hairline on every contour and self-luminous pad beacons are non-negotiable. Nothing gameplay-critical lives only in light.
+              </div>
+            </div>
+          </div>
+
+          <div style="display:grid;grid-template-columns:repeat(5,1fr);border:1px solid #2A3138;">
+            <div style="padding:10px 14px;border-right:1px solid #2A3138;"><span style="font:500 9px 'IBM Plex Mono',monospace;letter-spacing:.18em;color:#8A94A0;">PROJECT</span><div style="font:600 11.5px 'Jost',sans-serif;letter-spacing:.1em;margin-top:3px;color:#F4F7FA;">MOON LANDER</div></div>
+            <div style="padding:10px 14px;border-right:1px solid #2A3138;"><span style="font:500 9px 'IBM Plex Mono',monospace;letter-spacing:.18em;color:#8A94A0;">DOC</span><div style="font:600 11.5px 'Jost',sans-serif;letter-spacing:.1em;margin-top:3px;color:#F4F7FA;">VISUAL IDENTITY SPEC</div></div>
+            <div style="padding:10px 14px;border-right:1px solid #2A3138;"><span style="font:500 9px 'IBM Plex Mono',monospace;letter-spacing:.18em;color:#8A94A0;">DIRECTION</span><div style="font:600 11.5px 'Jost',sans-serif;letter-spacing:.1em;margin-top:3px;color:#F4F7FA;">TERMINATOR LINE — ALT.</div></div>
+            <div style="padding:10px 14px;border-right:1px solid #2A3138;"><span style="font:500 9px 'IBM Plex Mono',monospace;letter-spacing:.18em;color:#8A94A0;">PRIMARY</span><div style="font:600 11.5px 'Jost',sans-serif;letter-spacing:.1em;margin-top:3px;color:#F4F7FA;">SEE <a class="dv-oid" href="#1a">1a</a></div></div>
+            <div style="padding:10px 14px;"><span style="font:500 9px 'IBM Plex Mono',monospace;letter-spacing:.18em;color:#8A94A0;">REV</span><div style="font:600 11.5px 'Jost',sans-serif;letter-spacing:.1em;margin-top:3px;color:#F4F7FA;">A · 2026-07-11</div></div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <div class="dv-opt" id="2b" data-screen-label="2b — Playable prototype launcher">
+      <div class="dv-olabel"><a class="dv-oid" href="#2b">2b</a>BUILD — playable prototype · implements <a class="dv-oid" href="#1a">1a</a></div>
+      <div class="dv-card" style="width:430px;">
+        <div style="padding:22px 24px;display:flex;flex-direction:column;gap:16px;">
+          <div style="display:flex;gap:16px;align-items:center;">
+            <svg viewBox="-42 -56 84 100" style="width:64px;flex:none;"><use href="#fm-craft"></use><use href="#fm-flame"></use></svg>
+            <div>
+              <div style="font:500 10px 'IBM Plex Mono',monospace;letter-spacing:.24em;color:#8FB0C9;">PLAYABLE BUILD 0.1</div>
+              <div style="font:700 20px 'Jost',sans-serif;letter-spacing:.1em;">MOON LANDER</div>
+              <div style="font:400 11px 'IBM Plex Mono',monospace;color:#D9A544;margin-top:2px;">FLIGHT MANUAL SPEC — <a class="dv-oid" href="#1a">1a</a></div>
+            </div>
+          </div>
+          <div style="font:400 11.5px/1.7 'IBM Plex Mono',monospace;color:#8FB0C9;">
+            — CHIP LOGIC + ANNUNCIATOR PER S-06<br>
+            — SCORING + TERMINAL CARDS PER S-07<br>
+            — FLAME · DUST · LOSS FX PER S-05<br>
+            — SEEDED TERRAIN, ×1 / ×3 PADS PER S-04
+          </div>
+          <div style="border:1px dashed #2C4E6B;padding:9px 12px;font:400 11px/1.6 'IBM Plex Mono',monospace;color:#C6D6E2;">← → RCS ROTATE&nbsp;&nbsp;·&nbsp;&nbsp;↑ / SPACE MAIN ENGINE<br>R RE-FLY&nbsp;&nbsp;·&nbsp;&nbsp;ENTER NEXT SITE</div>
+          <a href="Moon%20Lander%20Prototype.dc.html" style="display:block;text-align:center;border:1.5px solid #2FE6A6;padding:12px;font:600 13px 'Jost',sans-serif;letter-spacing:.2em;">▶ LAUNCH PROTOTYPE</a>
+          <div style="font:400 11px/1.5 'Jost',sans-serif;color:rgba(233,242,249,.55);">Gravity, engine power, start fuel, path + grid overlays are adjustable in the prototype’s Tweaks panel. Flight rules: V/S ≤ 2.5 · H/S ≤ 1.5 · TILT ≤ 8°.</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <p class="dv-next">Also this turn: <a class="dv-oid" href="#1a">1a</a>’s hero HUD mockup below is now live — it flies the approach on a 13 s loop (toggle via “Animate hero” in Tweaks). Try next: “make the 2a hero fly too” · “title screen + site map in 1a style” · “harder physics preset”.</p>
+</section>
+
+<section class="dv-turn" id="t1">
+  <div class="dv-thd"><a class="dv-tid" href="#t1">1</a><span class="dv-tname">Art direction — recommendation + alternative</span></div>
+  <div class="dv-opts">
+
+    <div class="dv-opt" id="1a" data-screen-label="1a — Flight Manual spec sheet">
+      <div class="dv-olabel"><a class="dv-oid" href="#1a">1a</a>RECOMMENDED — “Flight Manual” · full visual design spec</div>
+      <div class="dv-card" style="width:1360px;background-image:linear-gradient(rgba(44,78,107,0.14) 1px, transparent 1px),linear-gradient(90deg, rgba(44,78,107,0.14) 1px, transparent 1px);background-size:64px 64px;">
+
+        <div style="display:grid;grid-template-columns:1fr 190px 150px 130px 170px;border-bottom:1px solid #2C4E6B;">
+          <div style="padding:22px 28px;border-right:1px solid #2C4E6B;">
+            <div style="font:500 10px 'IBM Plex Mono',monospace;letter-spacing:.28em;color:#8FB0C9;margin-bottom:6px;">VISUAL IDENTITY SPEC — SHEET 01/01</div>
+            <div style="font:700 26px/1.1 'Jost',sans-serif;letter-spacing:.1em;">MOON LANDER</div>
+          </div>
+          <div style="padding:14px 16px;border-right:1px solid #2C4E6B;">
+            <div style="font:500 9px 'IBM Plex Mono',monospace;letter-spacing:.2em;color:#8FB0C9;margin-bottom:5px;">DIRECTION</div>
+            <div style="font:600 13px 'Jost',sans-serif;letter-spacing:.08em;">FLIGHT MANUAL</div>
+            <div style="font:400 10.5px 'IBM Plex Mono',monospace;color:#D9A544;margin-top:3px;">RECOMMENDED</div>
+          </div>
+          <div style="padding:14px 16px;border-right:1px solid #2C4E6B;">
+            <div style="font:500 9px 'IBM Plex Mono',monospace;letter-spacing:.2em;color:#8FB0C9;margin-bottom:5px;">REF FRAME</div>
+            <div style="font:500 12px 'IBM Plex Mono',monospace;">1280 × 720</div>
+            <div style="font:400 10.5px 'IBM Plex Mono',monospace;color:#8FB0C9;margin-top:3px;">PX @ 1×</div>
+          </div>
+          <div style="padding:14px 16px;border-right:1px solid #2C4E6B;">
+            <div style="font:500 9px 'IBM Plex Mono',monospace;letter-spacing:.2em;color:#8FB0C9;margin-bottom:5px;">REV</div>
+            <div style="font:500 12px 'IBM Plex Mono',monospace;">A</div>
+            <div style="font:400 10.5px 'IBM Plex Mono',monospace;color:#8FB0C9;margin-top:3px;">2026-07-10</div>
+          </div>
+          <div style="padding:14px 16px;">
+            <div style="font:500 9px 'IBM Plex Mono',monospace;letter-spacing:.2em;color:#8FB0C9;margin-bottom:5px;">ALTERNATE</div>
+            <div style="font:600 13px 'Jost',sans-serif;letter-spacing:.08em;">TERMINATOR LINE</div>
+            <div style="font:400 10.5px 'IBM Plex Mono',monospace;margin-top:3px;">SEE <a class="dv-oid" href="#1b">1b</a></div>
+          </div>
+        </div>
+
+        <div style="padding:34px 40px 40px;display:flex;flex-direction:column;gap:44px;">
+
+          <div>
+            <div style="display:flex;align-items:baseline;gap:12px;border-bottom:1px solid #2C4E6B;padding-bottom:8px;margin-bottom:18px;">
+              <span style="font:600 11px 'IBM Plex Mono',monospace;color:#D9A544;">S-01</span>
+              <span style="font:600 13px 'Jost',sans-serif;letter-spacing:.22em;">DIRECTION &amp; RATIONALE</span>
+            </div>
+            <div style="display:grid;grid-template-columns:1.5fr 1fr;gap:36px;">
+              <div style="font:400 14px/1.65 'Jost',sans-serif;color:#C6D6E2;text-wrap:pretty;">
+                The game renders as a live page from a lunar-module flight manual: ink line-work on a drafting field, survey grid, dimension callouts. The fantasy is <span style="color:#E9F2F9;font-weight:600;">precision, not spectacle</span> — you are flying the diagram, and the HUD grades every second of the burn.
+                Color is rationed: the world holds four inks; teal, amber and red are reserved exclusively for judgment (safe / caution / exceed), so the eye learns that <span style="color:#E9F2F9;font-weight:600;">color = consequence</span>. No CRT glow, no neon bloom, no scanlines — the tension of a descent is a steady needle, not a lens flare.
+              </div>
+              <div style="display:flex;flex-direction:column;gap:8px;">
+                <div style="border:1px solid #2C4E6B;padding:9px 14px;font:600 12px 'Jost',sans-serif;letter-spacing:.16em;">01 — FLY THE DIAGRAM</div>
+                <div style="border:1px solid #2C4E6B;padding:9px 14px;font:600 12px 'Jost',sans-serif;letter-spacing:.16em;">02 — COLOR = CONSEQUENCE</div>
+                <div style="border:1px solid #2C4E6B;padding:9px 14px;font:600 12px 'Jost',sans-serif;letter-spacing:.16em;">03 — PRINT, NOT PHOSPHOR</div>
+                <div style="font:400 11.5px/1.5 'IBM Plex Mono',monospace;color:#8FB0C9;margin-top:4px;">NOT THIS: neon wireframe arcade, CRT bloom, parallax haze, particle spam.</div>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <div style="display:flex;align-items:baseline;gap:12px;border-bottom:1px solid #2C4E6B;padding-bottom:8px;margin-bottom:18px;">
+              <span style="font:600 11px 'IBM Plex Mono',monospace;color:#D9A544;">S-02</span>
+              <span style="font:600 13px 'Jost',sans-serif;letter-spacing:.22em;">PALETTE</span>
+              <span style="font:400 11px 'IBM Plex Mono',monospace;color:#8FB0C9;margin-left:auto;">ENVIRONMENT = 6 INKS · SIGNALS = 5, RESERVED</span>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:14px;margin-bottom:14px;">
+              <div>
+                <div style="height:56px;background:#081420;border:1px solid rgba(233,242,249,.18);"></div>
+                <div style="font:600 11.5px 'Jost',sans-serif;letter-spacing:.1em;margin-top:7px;">ZENITH</div>
+                <div style="font:400 11px 'IBM Plex Mono',monospace;color:#8FB0C9;">#081420 · upper sky, page ground</div>
+              </div>
+              <div>
+                <div style="height:56px;background:#0E2133;border:1px solid rgba(233,242,249,.18);"></div>
+                <div style="font:600 11.5px 'Jost',sans-serif;letter-spacing:.1em;margin-top:7px;">FIELD NAVY</div>
+                <div style="font:400 11px 'IBM Plex Mono',monospace;color:#8FB0C9;">#0E2133 · sky at horizon, panels</div>
+              </div>
+              <div>
+                <div style="height:56px;background:#050B12;border:1px solid rgba(233,242,249,.18);"></div>
+                <div style="font:600 11.5px 'Jost',sans-serif;letter-spacing:.1em;margin-top:7px;">REGOLITH</div>
+                <div style="font:400 11px 'IBM Plex Mono',monospace;color:#8FB0C9;">#050B12 · terrain fill — darkest value on screen</div>
+              </div>
+              <div>
+                <div style="height:56px;background:#2C4E6B;"></div>
+                <div style="font:600 11.5px 'Jost',sans-serif;letter-spacing:.1em;margin-top:7px;">SURVEY LINE</div>
+                <div style="font:400 11px 'IBM Plex Mono',monospace;color:#8FB0C9;">#2C4E6B · grid, hatch, hairline frames</div>
+              </div>
+              <div>
+                <div style="height:56px;background:#8FB0C9;"></div>
+                <div style="font:600 11.5px 'Jost',sans-serif;letter-spacing:.1em;margin-top:7px;">VELLUM</div>
+                <div style="font:400 11px 'IBM Plex Mono',monospace;color:#8FB0C9;">#8FB0C9 · secondary ink: units, annotations</div>
+              </div>
+              <div>
+                <div style="height:56px;background:#E9F2F9;"></div>
+                <div style="font:600 11.5px 'Jost',sans-serif;letter-spacing:.1em;margin-top:7px;">INK</div>
+                <div style="font:400 11px 'IBM Plex Mono',monospace;color:#8FB0C9;">#E9F2F9 · line-work, lander stroke, primary text</div>
+              </div>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:14px;">
+              <div>
+                <div style="height:56px;background:#D9A544;"></div>
+                <div style="font:600 11.5px 'Jost',sans-serif;letter-spacing:.1em;margin-top:7px;">LM GOLD</div>
+                <div style="font:400 11px 'IBM Plex Mono',monospace;color:#8FB0C9;">#D9A544 · craft foil, score, bonus pad ×3</div>
+              </div>
+              <div>
+                <div style="height:56px;background:#2FE6A6;"></div>
+                <div style="font:600 11.5px 'Jost',sans-serif;letter-spacing:.1em;margin-top:7px;">GO TEAL ●</div>
+                <div style="font:400 11px 'IBM Plex Mono',monospace;color:#8FB0C9;">#2FE6A6 · safe state, pad threshold, success</div>
+              </div>
+              <div>
+                <div style="height:56px;background:#FFB020;"></div>
+                <div style="font:600 11.5px 'Jost',sans-serif;letter-spacing:.1em;margin-top:7px;">CAUTION AMBER ▲</div>
+                <div style="font:400 11px 'IBM Plex Mono',monospace;color:#8FB0C9;">#FFB020 · warnings, fuel low, flame body</div>
+              </div>
+              <div>
+                <div style="height:56px;background:#FF7A29;"></div>
+                <div style="font:600 11.5px 'Jost',sans-serif;letter-spacing:.1em;margin-top:7px;">THRUST ORANGE</div>
+                <div style="font:400 11px 'IBM Plex Mono',monospace;color:#8FB0C9;">#FF7A29 · flame sheath, RCS, embers</div>
+              </div>
+              <div>
+                <div style="height:56px;background:#FF4D5E;"></div>
+                <div style="font:600 11.5px 'Jost',sans-serif;letter-spacing:.1em;margin-top:7px;">ABORT RED ✕</div>
+                <div style="font:400 11px 'IBM Plex Mono',monospace;color:#8FB0C9;">#FF4D5E · exceed state, crash, NO-GO</div>
+              </div>
+              <div style="border:1px dashed #2C4E6B;padding:10px 12px;">
+                <div style="font:600 10px 'IBM Plex Mono',monospace;letter-spacing:.14em;color:#D9A544;margin-bottom:5px;">RATIONING RULE</div>
+                <div style="font:400 11px/1.5 'Jost',sans-serif;color:#C6D6E2;">Signals never decorate. If it is teal, amber or red, it is telling you whether you live.</div>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <div style="display:flex;align-items:baseline;gap:12px;border-bottom:1px solid #2C4E6B;padding-bottom:8px;margin-bottom:18px;">
+              <span style="font:600 11px 'IBM Plex Mono',monospace;color:#D9A544;">S-03</span>
+              <span style="font:600 13px 'Jost',sans-serif;letter-spacing:.22em;">CRAFT — LM-7 “SURVEYOR”</span>
+              <span style="font:400 11px 'IBM Plex Mono',monospace;color:#8FB0C9;margin-left:auto;">ONE BASE SPRITE · STATES ARE OVERLAYS</span>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:16px;">
+              <div style="border:1px solid #2C4E6B;background:rgba(8,20,32,.55);padding:12px;">
+                <svg viewBox="-64 -64 128 128" style="width:100%;display:block;">
+                  <g transform="scale(0.82)"><use href="#fm-craft"></use></g>
+                </svg>
+                <div style="font:600 11px 'IBM Plex Mono',monospace;color:#D9A544;margin-top:8px;">ST-01 · COAST</div>
+                <div style="font:400 11px/1.5 'Jost',sans-serif;color:#8FB0C9;margin-top:3px;">Engine null, pods cold. Silhouette: cabin octagon, foil band, splayed legs.</div>
+              </div>
+              <div style="border:1px solid #2C4E6B;background:rgba(8,20,32,.55);padding:12px;">
+                <svg viewBox="-64 -64 128 128" style="width:100%;display:block;">
+                  <g transform="scale(0.82)"><use href="#fm-craft"></use><use href="#fm-flame"></use></g>
+                </svg>
+                <div style="font:600 11px 'IBM Plex Mono',monospace;color:#D9A544;">ST-02 · MAIN BURN</div>
+                <div style="font:400 11px/1.5 'Jost',sans-serif;color:#8FB0C9;margin-top:3px;">3-stop flame + embers. Length tracks throttle, 12–48 px @1×.</div>
+              </div>
+              <div style="border:1px solid #2C4E6B;background:rgba(8,20,32,.55);padding:12px;">
+                <svg viewBox="-64 -64 128 128" style="width:100%;display:block;">
+                  <path d="M -32 -50 A 38 38 0 0 1 32 -50" fill="none" stroke="#8FB0C9" stroke-width="1.5" stroke-dasharray="3 4"/>
+                  <polygon points="32,-50 26,-56 25,-47" fill="#8FB0C9"/>
+                  <g transform="scale(0.82) rotate(14)">
+                    <use href="#fm-craft"></use>
+                    <use href="#fm-rcs" transform="translate(-27,-29) rotate(180)"></use>
+                  </g>
+                </svg>
+                <div style="font:600 11px 'IBM Plex Mono',monospace;color:#D9A544;">ST-03 · RCS ROTATE</div>
+                <div style="font:400 11px/1.5 'Jost',sans-serif;color:#8FB0C9;margin-top:3px;">2-frame amber puff at cabin pod; craft rotates about CG.</div>
+              </div>
+              <div style="border:1px solid #2C4E6B;background:rgba(8,20,32,.55);padding:12px;">
+                <svg viewBox="-64 -64 128 128" style="width:100%;display:block;">
+                  <line x1="-60" y1="21" x2="60" y2="21" stroke="#8FB0C9" stroke-width="1" stroke-dasharray="2 4"/>
+                  <g transform="scale(0.82)"><use href="#fm-craft"></use><use href="#fm-ring"></use></g>
+                </svg>
+                <div style="font:600 11px 'IBM Plex Mono',monospace;color:#2FE6A6;">ST-04 · DOWN &amp; SAFE</div>
+                <div style="font:400 11px/1.5 'Jost',sans-serif;color:#8FB0C9;margin-top:3px;">Legs compress 2 px; teal survey ring pulses ×2, then holds.</div>
+              </div>
+              <div style="border:1px solid #2C4E6B;background:rgba(8,20,32,.55);padding:12px;">
+                <svg viewBox="-64 -64 128 128" style="width:100%;display:block;">
+                  <line x1="-60" y1="20" x2="60" y2="20" stroke="#8FB0C9" stroke-width="1" stroke-dasharray="2 4"/>
+                  <g transform="scale(0.82) translate(0,-4)"><use href="#fm-debris"></use></g>
+                </svg>
+                <div style="font:600 11px 'IBM Plex Mono',monospace;color:#FF4D5E;">ST-05 · LOSS OF VEHICLE</div>
+                <div style="font:400 11px/1.5 'Jost',sans-serif;color:#8FB0C9;margin-top:3px;">5 ink shards + red ✕ site marker; scorch decal persists on terrain.</div>
+              </div>
+            </div>
+            <div style="font:400 12px/1.6 'IBM Plex Mono',monospace;color:#8FB0C9;margin-top:14px;">
+              CONSTRUCTION — 2 px ink stroke over dark fills: silhouette survives at 24 px sprite size against any sky value. Gold foil band is the craft’s only permanent color; it is the same gold as score, so the currency you protect is painted on the hull.
+            </div>
+          </div>
+
+          <div>
+            <div style="display:flex;align-items:baseline;gap:12px;border-bottom:1px solid #2C4E6B;padding-bottom:8px;margin-bottom:18px;">
+              <span style="font:600 11px 'IBM Plex Mono',monospace;color:#D9A544;">S-04</span>
+              <span style="font:600 13px 'Jost',sans-serif;letter-spacing:.22em;">TERRAIN &amp; PADS</span>
+            </div>
+            <div style="border:1px solid #2C4E6B;background:#081420;">
+              <svg viewBox="0 0 1240 240" style="width:100%;display:block;">
+                <rect width="1240" height="240" fill="url(#fm-grid)"/>
+                <polygon fill="#050B12" points="0,150 60,118 125,162 200,132 255,170 300,148 340,148 500,148 560,178 620,152 690,186 760,140 820,158 900,95 1000,95 1060,130 1120,108 1180,142 1240,120 1240,240 0,240"/>
+                <polygon fill="url(#fm-hatch)" points="0,150 60,118 125,162 200,132 255,170 300,148 340,148 500,148 560,178 620,152 690,186 760,140 820,158 900,95 1000,95 1060,130 1120,108 1180,142 1240,120 1240,240 0,240"/>
+                <polyline points="0,150 60,118 125,162 200,132 255,170 300,148 340,148 500,148 560,178 620,152 690,186 760,140 820,158 900,95 1000,95 1060,130 1120,108 1180,142 1240,120" fill="none" stroke="#E9F2F9" stroke-width="2"/>
+                <line x1="340" y1="148" x2="500" y2="148" stroke="#2FE6A6" stroke-width="4"/>
+                <circle cx="343" cy="141" r="3" fill="#2FE6A6"/>
+                <circle cx="497" cy="141" r="3" fill="#2FE6A6"/>
+                <polyline points="364,156 370,161 376,156" fill="none" stroke="#2FE6A6" stroke-width="1.5"/>
+                <polyline points="398,156 404,161 410,156" fill="none" stroke="#2FE6A6" stroke-width="1.5"/>
+                <polyline points="430,156 436,161 442,156" fill="none" stroke="#2FE6A6" stroke-width="1.5"/>
+                <polyline points="462,156 468,161 474,156" fill="none" stroke="#2FE6A6" stroke-width="1.5"/>
+                <text x="420" y="182" text-anchor="middle" fill="#8FB0C9" style="font:500 12px 'IBM Plex Mono',monospace;">PAD 1 · ×1</text>
+                <line x1="340" y1="128" x2="500" y2="128" stroke="#8FB0C9" stroke-width="1"/>
+                <line x1="340" y1="123" x2="340" y2="133" stroke="#8FB0C9" stroke-width="1"/>
+                <line x1="500" y1="123" x2="500" y2="133" stroke="#8FB0C9" stroke-width="1"/>
+                <text x="420" y="120" text-anchor="middle" fill="#8FB0C9" style="font:400 11px 'IBM Plex Mono',monospace;">160 M · SLOPE ≤ 3°</text>
+                <line x1="900" y1="95" x2="1000" y2="95" stroke="#D9A544" stroke-width="4"/>
+                <circle cx="903" cy="88" r="3" fill="#D9A544"/>
+                <circle cx="997" cy="88" r="3" fill="#D9A544"/>
+                <polyline points="928,103 934,108 940,103" fill="none" stroke="#D9A544" stroke-width="1.5"/>
+                <polyline points="960,103 966,108 972,103" fill="none" stroke="#D9A544" stroke-width="1.5"/>
+                <line x1="1004" y1="95" x2="1004" y2="60" stroke="#D9A544" stroke-width="1.5"/>
+                <polygon points="1004,60 1030,67 1004,74" fill="#D9A544"/>
+                <text x="950" y="126" text-anchor="middle" fill="#D9A544" style="font:500 12px 'IBM Plex Mono',monospace;">PAD 2 · ×3</text>
+                <polygon points="690,140 698,154 682,154" fill="none" stroke="#FFB020" stroke-width="1.5"/>
+                <line x1="690" y1="145" x2="690" y2="149.5" stroke="#FFB020" stroke-width="1.5"/>
+                <circle cx="690" cy="152" r="0.9" fill="#FFB020"/>
+                <line x1="690" y1="158" x2="690" y2="180" stroke="#FFB020" stroke-width="1" stroke-dasharray="2 3"/>
+                <text x="690" y="132" text-anchor="middle" fill="#FFB020" style="font:400 11px 'IBM Plex Mono',monospace;">SLOPE 24° — NO LAND</text>
+                <line x1="24" y1="60" x2="24" y2="220" stroke="#8FB0C9" stroke-width="1"/>
+                <line x1="20" y1="60" x2="28" y2="60" stroke="#8FB0C9" stroke-width="1"/>
+                <line x1="20" y1="140" x2="28" y2="140" stroke="#8FB0C9" stroke-width="1"/>
+                <line x1="20" y1="220" x2="28" y2="220" stroke="#8FB0C9" stroke-width="1"/>
+                <text x="34" y="64" fill="#8FB0C9" style="font:400 10px 'IBM Plex Mono',monospace;">EL. +200M</text>
+                <text x="34" y="144" fill="#8FB0C9" style="font:400 10px 'IBM Plex Mono',monospace;">EL. +100M</text>
+                <text x="34" y="224" fill="#8FB0C9" style="font:400 10px 'IBM Plex Mono',monospace;">EL. 0</text>
+              </svg>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px 36px;font:400 12px/1.6 'Jost',sans-serif;color:#C6D6E2;margin-top:14px;">
+              <div>— Profile: 2 px ink contour over Regolith fill (darkest value on screen) — terrain always separates from sky, even at horizon.</div>
+              <div>— Fill texture: 45° survey hatch, 9 px pitch, 50% Survey Line. Texture without noise; no gradients on rock.</div>
+              <div>— Pads carry the only environmental color. Teal chevrons point to centerline; beacon dots mark usable width; gold + pennant + ×3 numeral = bonus (never gold alone).</div>
+              <div>— Hazards annotated in amber survey tags. Slopes &gt; 8° never draw a pad strip, so “landable” has exactly one look.</div>
+            </div>
+          </div>
+
+          <div>
+            <div style="display:flex;align-items:baseline;gap:12px;border-bottom:1px solid #2C4E6B;padding-bottom:8px;margin-bottom:18px;">
+              <span style="font:600 11px 'IBM Plex Mono',monospace;color:#D9A544;">S-05</span>
+              <span style="font:600 13px 'Jost',sans-serif;letter-spacing:.22em;">FX</span>
+              <span style="font:400 11px 'IBM Plex Mono',monospace;color:#8FB0C9;margin-left:auto;">DECORATIVE ONLY — EVERY STATE CHANGE IS MIRRORED IN HUD TEXT</span>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;">
+              <div style="border:1px solid #2C4E6B;background:rgba(8,20,32,.55);padding:14px;">
+                <svg viewBox="-70 30 150 130" style="width:100%;height:150px;display:block;">
+                  <g transform="translate(-30,0) scale(2)"><use href="#fm-flame"></use></g>
+                  <line x1="-22" y1="52" x2="4" y2="52" stroke="#8FB0C9" stroke-width="0.75" stroke-dasharray="2 3"/>
+                  <text x="8" y="55" fill="#8FB0C9" style="font:400 10px 'IBM Plex Mono',monospace;">CORE #FFE9C4</text>
+                  <line x1="-19" y1="80" x2="4" y2="80" stroke="#8FB0C9" stroke-width="0.75" stroke-dasharray="2 3"/>
+                  <text x="8" y="83" fill="#8FB0C9" style="font:400 10px 'IBM Plex Mono',monospace;">BODY #FFB020</text>
+                  <line x1="-26" y1="100" x2="4" y2="100" stroke="#8FB0C9" stroke-width="0.75" stroke-dasharray="2 3"/>
+                  <text x="8" y="103" fill="#8FB0C9" style="font:400 10px 'IBM Plex Mono',monospace;">SHEATH #FF7A29 45%</text>
+                  <line x1="-30" y1="124" x2="4" y2="124" stroke="#8FB0C9" stroke-width="0.75" stroke-dasharray="2 3"/>
+                  <text x="8" y="127" fill="#8FB0C9" style="font:400 10px 'IBM Plex Mono',monospace;">EMBERS 1–2 PX</text>
+                </svg>
+                <div style="font:600 11px 'IBM Plex Mono',monospace;color:#D9A544;margin-top:6px;">FX-01 · THRUST FLAME</div>
+                <div style="font:400 11px/1.5 'Jost',sans-serif;color:#8FB0C9;margin-top:3px;">Hard-edged polygons, no blur. 4–6 embers/s fall aft and fade in 500 ms.</div>
+              </div>
+              <div style="border:1px solid #2C4E6B;background:rgba(8,20,32,.55);padding:14px;">
+                <svg viewBox="-70 -20 150 130" style="width:100%;height:150px;display:block;">
+                  <line x1="-62" y1="70" x2="72" y2="70" stroke="#E9F2F9" stroke-width="2"/>
+                  <path d="M -4 68 Q -26 58 -52 64" fill="none" stroke="#8FB0C9" stroke-width="1.5" opacity="0.85"/>
+                  <path d="M 4 68 Q 26 58 52 64" fill="none" stroke="#8FB0C9" stroke-width="1.5" opacity="0.85"/>
+                  <circle cx="-22" cy="58" r="1.5" fill="#8FB0C9"/>
+                  <circle cx="-36" cy="60" r="1.2" fill="#8FB0C9" opacity="0.7"/>
+                  <circle cx="-50" cy="62" r="1" fill="#8FB0C9" opacity="0.5"/>
+                  <circle cx="22" cy="58" r="1.5" fill="#8FB0C9"/>
+                  <circle cx="38" cy="59" r="1.2" fill="#8FB0C9" opacity="0.7"/>
+                  <circle cx="52" cy="62" r="1" fill="#8FB0C9" opacity="0.5"/>
+                  <circle cx="-12" cy="50" r="1.2" fill="#8FB0C9" opacity="0.8"/>
+                  <circle cx="14" cy="48" r="1.2" fill="#8FB0C9" opacity="0.8"/>
+                </svg>
+                <div style="font:600 11px 'IBM Plex Mono',monospace;color:#D9A544;margin-top:6px;">FX-02 · TOUCHDOWN DUST</div>
+                <div style="font:400 11px/1.5 'Jost',sans-serif;color:#8FB0C9;margin-top:3px;">8–12 vellum motes kicked laterally in two shallow fans; ballistic settle in 400 ms — no billowing (vacuum).</div>
+              </div>
+              <div style="border:1px solid #2C4E6B;background:rgba(8,20,32,.55);padding:14px;">
+                <svg viewBox="-70 -20 150 130" style="width:100%;height:150px;display:block;">
+                  <g transform="translate(0,48)">
+                    <circle cx="0" cy="0" r="24" fill="none" stroke="#FF4D5E" stroke-width="2"/>
+                    <circle cx="0" cy="0" r="10" fill="#FFB020" opacity="0.3"/>
+                    <circle cx="0" cy="0" r="10" fill="none" stroke="#FFB020" stroke-width="1.5"/>
+                    <polygon points="0,-30 5,-44 -5,-42" fill="#0B1A2A" stroke="#E9F2F9" stroke-width="1.5"/>
+                    <polygon points="26,-14 38,-20 36,-8" fill="#0B1A2A" stroke="#E9F2F9" stroke-width="1.5"/>
+                    <polygon points="28,16 40,20 32,27" fill="#0B1A2A" stroke="#E9F2F9" stroke-width="1.5"/>
+                    <polygon points="-28,14 -40,18 -33,26" fill="#0B1A2A" stroke="#E9F2F9" stroke-width="1.5"/>
+                    <polygon points="-26,-16 -38,-22 -35,-9" fill="#0B1A2A" stroke="#E9F2F9" stroke-width="1.5"/>
+                    <circle cx="14" cy="-34" r="1.4" fill="#FF7A29"/>
+                    <circle cx="-16" cy="34" r="1.4" fill="#FF7A29"/>
+                    <circle cx="42" cy="2" r="1.2" fill="#FFB020"/>
+                    <circle cx="-44" cy="-2" r="1.2" fill="#FFB020"/>
+                  </g>
+                </svg>
+                <div style="font:600 11px 'IBM Plex Mono',monospace;color:#FF4D5E;margin-top:6px;">FX-03 · LOSS OF VEHICLE</div>
+                <div style="font:400 11px/1.5 'Jost',sans-serif;color:#8FB0C9;margin-top:3px;">120 ms red flash ring → shard scatter 600 ms → embers cool 2 s. One screen shake, 4 px, never more.</div>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <div style="display:flex;align-items:baseline;gap:12px;border-bottom:1px solid #2C4E6B;padding-bottom:8px;margin-bottom:18px;">
+              <span style="font:600 11px 'IBM Plex Mono',monospace;color:#D9A544;">S-06</span>
+              <span style="font:600 13px 'Jost',sans-serif;letter-spacing:.22em;">IN-GAME HUD — PRIMARY MOCKUP</span>
+              <span style="font:400 11px 'IBM Plex Mono',monospace;color:#8FB0C9;margin-left:auto;">1280 × 720 @ 1× · BALLOONS ① – ⑤ KEY BELOW</span>
+            </div>
+
+            <div data-screen-label="1a — In-game HUD mockup" style="position:relative;width:1280px;height:720px;border:1px solid #2C4E6B;overflow:hidden;background:linear-gradient(180deg,#081420 0%,#0E2133 58%,#143049 100%);">
+              <sc-if value="{{ showGrid }}" hint-placeholder-val="{{ true }}">
+                <svg viewBox="0 0 1280 720" style="position:absolute;inset:0;width:100%;height:100%;">
+                  <rect width="1280" height="720" fill="url(#fm-grid)"/>
+                  <rect width="1280" height="720" fill="url(#fm-gridM)"/>
+                </svg>
+              </sc-if>
+              <svg viewBox="0 0 1280 720" style="position:absolute;inset:0;width:100%;height:100%;">
+                <circle cx="40" cy="64" r="1.2" fill="#E9F2F9" opacity="0.5"/>
+                <circle cx="122" cy="30" r="0.9" fill="#E9F2F9" opacity="0.35"/>
+                <circle cx="212" cy="92" r="1.4" fill="#E9F2F9" opacity="0.6"/>
+                <circle cx="333" cy="52" r="0.8" fill="#E9F2F9" opacity="0.3"/>
+                <circle cx="412" cy="142" r="1.1" fill="#E9F2F9" opacity="0.45"/>
+                <circle cx="502" cy="42" r="1.3" fill="#E9F2F9" opacity="0.55"/>
+                <circle cx="592" cy="112" r="0.9" fill="#E9F2F9" opacity="0.35"/>
+                <circle cx="662" cy="64" r="1.2" fill="#E9F2F9" opacity="0.5"/>
+                <circle cx="742" cy="152" r="0.8" fill="#E9F2F9" opacity="0.3"/>
+                <circle cx="822" cy="44" r="1.4" fill="#E9F2F9" opacity="0.6"/>
+                <circle cx="902" cy="102" r="1" fill="#E9F2F9" opacity="0.4"/>
+                <circle cx="1002" cy="64" r="1.2" fill="#E9F2F9" opacity="0.5"/>
+                <circle cx="1082" cy="132" r="0.9" fill="#E9F2F9" opacity="0.35"/>
+                <circle cx="1152" cy="44" r="1.1" fill="#E9F2F9" opacity="0.45"/>
+                <circle cx="1222" cy="92" r="1.3" fill="#E9F2F9" opacity="0.55"/>
+                <circle cx="72" cy="182" r="1" fill="#E9F2F9" opacity="0.4"/>
+                <circle cx="182" cy="222" r="1.2" fill="#E9F2F9" opacity="0.45"/>
+                <circle cx="282" cy="162" r="0.8" fill="#E9F2F9" opacity="0.3"/>
+                <circle cx="392" cy="242" r="1.1" fill="#E9F2F9" opacity="0.4"/>
+                <circle cx="522" cy="202" r="0.9" fill="#E9F2F9" opacity="0.35"/>
+                <circle cx="642" cy="262" r="1.2" fill="#E9F2F9" opacity="0.45"/>
+                <circle cx="762" cy="222" r="0.8" fill="#E9F2F9" opacity="0.3"/>
+                <circle cx="882" cy="192" r="1.3" fill="#E9F2F9" opacity="0.5"/>
+                <circle cx="992" cy="232" r="0.9" fill="#E9F2F9" opacity="0.35"/>
+                <circle cx="1102" cy="202" r="1.1" fill="#E9F2F9" opacity="0.4"/>
+                <circle cx="1202" cy="172" r="0.8" fill="#E9F2F9" opacity="0.3"/>
+                <circle cx="152" cy="322" r="1" fill="#E9F2F9" opacity="0.35"/>
+                <circle cx="322" cy="302" r="0.8" fill="#E9F2F9" opacity="0.3"/>
+                <circle cx="482" cy="332" r="1.1" fill="#E9F2F9" opacity="0.35"/>
+                <circle cx="702" cy="322" r="0.9" fill="#E9F2F9" opacity="0.3"/>
+                <circle cx="952" cy="302" r="1.2" fill="#E9F2F9" opacity="0.4"/>
+                <circle cx="1122" cy="302" r="0.8" fill="#E9F2F9" opacity="0.3"/>
+                <circle cx="1088" cy="96" r="14" fill="#7FB4D9" opacity="0.9"/>
+                <circle cx="1083" cy="91" r="12.5" fill="#0E2133" opacity="0.92"/>
+                <sc-if value="{{ heroFlying }}" hint-placeholder-val="{{ true }}">
+                  <path d="{{ heroPredD }}" fill="none" stroke="#8FB0C9" stroke-width="1.5" stroke-dasharray="1.5 7" opacity="0.9"><animate attributeName="stroke-dashoffset" dur="0.9s" repeatCount="indefinite" values="0;-8.5"/></path>
+                  <g transform="translate(436,540)">
+                    <circle cx="0" cy="0" r="4.5" fill="none" stroke="#2FE6A6" stroke-width="1.5"/>
+                    <line x1="0" y1="-9" x2="0" y2="9" stroke="#2FE6A6" stroke-width="1"/>
+                    <line x1="-9" y1="0" x2="9" y2="0" stroke="#2FE6A6" stroke-width="1"/>
+                  </g>
+                </sc-if>
+                <polygon fill="#050B12" points="0,470 70,430 130,500 200,455 260,520 340,540 520,540 600,490 650,510 720,440 780,470 840,455 950,430 1060,430 1120,470 1180,440 1280,500 1280,720 0,720"/>
+                <polygon fill="url(#fm-hatch)" points="0,470 70,430 130,500 200,455 260,520 340,540 520,540 600,490 650,510 720,440 780,470 840,455 950,430 1060,430 1120,470 1180,440 1280,500 1280,720 0,720"/>
+                <polyline points="0,470 70,430 130,500 200,455 260,520 340,540 520,540 600,490 650,510 720,440 780,470 840,455 950,430 1060,430 1120,470 1180,440 1280,500" fill="none" stroke="#E9F2F9" stroke-width="2"/>
+                <line x1="340" y1="540" x2="520" y2="540" stroke="#2FE6A6" stroke-width="4"/>
+                <circle cx="344" cy="533" r="3.5" fill="#2FE6A6"><animate attributeName="opacity" dur="1.6s" repeatCount="indefinite" values="1;0.3;1"/></circle>
+                <circle cx="516" cy="533" r="3.5" fill="#2FE6A6"><animate attributeName="opacity" dur="1.6s" begin="0.4s" repeatCount="indefinite" values="1;0.3;1"/></circle>
+                <polyline points="368,547 375,553 382,547" fill="none" stroke="#2FE6A6" stroke-width="1.5"/>
+                <polyline points="404,547 411,553 418,547" fill="none" stroke="#2FE6A6" stroke-width="1.5"/>
+                <polyline points="440,547 447,553 454,547" fill="none" stroke="#2FE6A6" stroke-width="1.5"/>
+                <polyline points="476,547 483,553 490,547" fill="none" stroke="#2FE6A6" stroke-width="1.5"/>
+                <text x="430" y="572" text-anchor="middle" fill="#8FB0C9" style="font:500 12px 'IBM Plex Mono',monospace;">PAD 1 · ×1</text>
+                <line x1="950" y1="430" x2="1060" y2="430" stroke="#D9A544" stroke-width="4"/>
+                <circle cx="954" cy="423" r="3.5" fill="#D9A544"><animate attributeName="opacity" dur="1.6s" begin="0.8s" repeatCount="indefinite" values="1;0.3;1"/></circle>
+                <circle cx="1056" cy="423" r="3.5" fill="#D9A544"><animate attributeName="opacity" dur="1.6s" begin="1.2s" repeatCount="indefinite" values="1;0.3;1"/></circle>
+                <polyline points="978,437 985,443 992,437" fill="none" stroke="#D9A544" stroke-width="1.5"/>
+                <polyline points="1014,437 1021,443 1028,437" fill="none" stroke="#D9A544" stroke-width="1.5"/>
+                <line x1="1063" y1="430" x2="1063" y2="396" stroke="#D9A544" stroke-width="1.5"/>
+                <polygon points="1063,396 1088,403 1063,410" fill="#D9A544"/>
+                <text x="1005" y="456" text-anchor="middle" fill="#D9A544" style="font:500 12px 'IBM Plex Mono',monospace;">PAD 2 · ×3</text>
+              </svg>
+              <svg viewBox="0 0 1280 720" style="position:absolute;inset:0;width:100%;height:100%;">
+                <sc-if value="{{ heroLanded }}" hint-placeholder-val="{{ false }}">
+                  <g transform="{{ heroCraftT }}"><use href="#fm-ring"></use></g>
+                </sc-if>
+                <g transform="{{ heroCraftT }}"><use href="#fm-craft"></use></g>
+                <sc-if value="{{ heroFlameOn }}" hint-placeholder-val="{{ true }}">
+                  <g transform="{{ heroCraftT }}"><g transform="{{ heroFlameT }}"><use href="#fm-flame"></use></g></g>
+                </sc-if>
+              </svg>
+
+              <div style="position:absolute;left:20px;top:20px;width:252px;background:rgba(6,16,27,0.78);border:1px solid #2C4E6B;padding:12px 14px;">
+                <div style="display:flex;justify-content:space-between;align-items:baseline;">
+                  <span style="font:600 11px 'Jost',sans-serif;letter-spacing:.18em;color:#8FB0C9;">FUEL</span>
+                  <span style="font:600 20px 'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums;">{{ heroFuel }}%</span>
+                </div>
+                <div style="position:relative;height:12px;border:1px solid rgba(233,242,249,.35);margin-top:6px;">
+                  <div style="position:absolute;left:0;top:0;bottom:0;width:{{ heroFuel }}%;background:#E9F2F9;"></div>
+                  <div style="position:absolute;left:25%;top:-3px;bottom:-3px;width:2px;background:#FFB020;"></div>
+                  <div style="position:absolute;left:50%;top:0;bottom:0;width:1px;background:rgba(44,78,107,.9);"></div>
+                  <div style="position:absolute;left:75%;top:0;bottom:0;width:1px;background:rgba(44,78,107,.9);"></div>
+                </div>
+                <div style="font:400 10px 'IBM Plex Mono',monospace;color:#8FB0C9;margin-top:4px;">CAUTION TICK 25% → AMBER · 10% → RED</div>
+                <div style="display:flex;justify-content:space-between;align-items:baseline;margin-top:12px;">
+                  <span style="font:600 11px 'Jost',sans-serif;letter-spacing:.18em;color:#8FB0C9;">THRUST</span>
+                  <span style="font:600 20px 'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums;color:{{ heroThrColor }};">{{ heroThr }}%</span>
+                </div>
+                <div style="display:flex;gap:3px;margin-top:6px;">
+                  <sc-for list="{{ heroThrSegs }}" as="seg" hint-placeholder-count="10">
+                    <div style="flex:1;height:10px;border:1px solid {{ seg.bc }};background:{{ seg.bg }};"></div>
+                  </sc-for>
+                </div>
+              </div>
+
+              <div style="position:absolute;left:50%;top:20px;transform:translateX(-50%);text-align:center;background:rgba(6,16,27,0.78);border:1px solid #2C4E6B;padding:10px 22px;">
+                <div style="font:600 10px 'Jost',sans-serif;letter-spacing:.24em;color:#8FB0C9;">SCORE</div>
+                <div style="font:600 24px 'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums;color:#D9A544;letter-spacing:.06em;">{{ heroScore }}</div>
+                <div style="font:400 11px 'IBM Plex Mono',monospace;color:#8FB0C9;margin-top:2px;">T+ {{ heroClock }}</div>
+              </div>
+
+              <div style="position:absolute;right:20px;top:20px;width:312px;background:rgba(6,16,27,0.78);border:1px solid #2C4E6B;padding:12px 14px;">
+                <div style="display:grid;grid-template-columns:44px 1fr 118px;gap:4px 10px;align-items:center;">
+                  <span style="font:600 11px 'Jost',sans-serif;letter-spacing:.14em;color:#8FB0C9;">ALT</span>
+                  <span style="font:600 21px 'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums;text-align:right;">{{ heroAlt }} <span style="font-size:12px;color:#8FB0C9;">M</span></span>
+                  <span style="font:400 10px 'IBM Plex Mono',monospace;color:#8FB0C9;text-align:right;">AGL</span>
+                  <span style="font:600 11px 'Jost',sans-serif;letter-spacing:.14em;color:#8FB0C9;">V/S</span>
+                  <span style="font:600 21px 'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums;text-align:right;color:{{ heroVsValC }};">{{ heroVs }} <span style="font-size:12px;color:#8FB0C9;">M/S</span></span>
+                  <span style="font:600 10.5px 'IBM Plex Mono',monospace;color:{{ heroVsChip.c }};border:1px solid {{ heroVsChip.c }};background:{{ heroVsChip.bg }};padding:2px 6px;text-align:center;">{{ heroVsChip.g }} MAX 2.5</span>
+                  <span style="font:600 11px 'Jost',sans-serif;letter-spacing:.14em;color:#8FB0C9;">H/S</span>
+                  <span style="font:600 21px 'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums;text-align:right;color:{{ heroHsValC }};">{{ heroHs }} <span style="font-size:12px;color:#8FB0C9;">M/S</span></span>
+                  <span style="font:600 10.5px 'IBM Plex Mono',monospace;color:{{ heroHsChip.c }};border:1px solid {{ heroHsChip.c }};background:{{ heroHsChip.bg }};padding:2px 6px;text-align:center;">{{ heroHsChip.g }} MAX 1.5</span>
+                  <span style="font:600 11px 'Jost',sans-serif;letter-spacing:.14em;color:#8FB0C9;">TILT</span>
+                  <span style="font:600 21px 'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums;text-align:right;color:{{ heroTiltValC }};">{{ heroTilt }}° </span>
+                  <span style="font:600 10.5px 'IBM Plex Mono',monospace;color:{{ heroTiltChip.c }};border:1px solid {{ heroTiltChip.c }};background:{{ heroTiltChip.bg }};padding:2px 6px;text-align:center;">{{ heroTiltChip.g }} MAX 8°</span>
+                </div>
+                <div style="margin-top:10px;border:1px solid {{ heroAnnC }};background:{{ heroAnnBg }};padding:6px 10px;text-align:center;font:600 12px 'IBM Plex Mono',monospace;letter-spacing:.12em;color:{{ heroAnnC }};">{{ heroAnnT }}</div>
+              </div>
+
+              <div style="position:absolute;left:288px;top:24px;width:20px;height:20px;border:1px solid #D9A544;border-radius:50%;background:rgba(8,20,32,.85);display:flex;align-items:center;justify-content:center;font:600 11px 'IBM Plex Mono',monospace;color:#D9A544;">1</div>
+              <div style="position:absolute;left:724px;top:24px;width:20px;height:20px;border:1px solid #D9A544;border-radius:50%;background:rgba(8,20,32,.85);display:flex;align-items:center;justify-content:center;font:600 11px 'IBM Plex Mono',monospace;color:#D9A544;">2</div>
+              <div style="position:absolute;right:348px;top:24px;width:20px;height:20px;border:1px solid #D9A544;border-radius:50%;background:rgba(8,20,32,.85);display:flex;align-items:center;justify-content:center;font:600 11px 'IBM Plex Mono',monospace;color:#D9A544;">3</div>
+              <div style="position:absolute;left:497px;top:412px;width:20px;height:20px;border:1px solid #D9A544;border-radius:50%;background:rgba(8,20,32,.85);display:flex;align-items:center;justify-content:center;font:600 11px 'IBM Plex Mono',monospace;color:#D9A544;">4</div>
+              <div style="position:absolute;left:300px;top:520px;width:20px;height:20px;border:1px solid #D9A544;border-radius:50%;background:rgba(8,20,32,.85);display:flex;align-items:center;justify-content:center;font:600 11px 'IBM Plex Mono',monospace;color:#D9A544;">5</div>
+            </div>
+
+            <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:16px;margin-top:16px;">
+              <div style="display:flex;gap:9px;align-items:flex-start;">
+                <span style="flex:none;width:18px;height:18px;border:1px solid #D9A544;border-radius:50%;display:flex;align-items:center;justify-content:center;font:600 10px 'IBM Plex Mono',monospace;color:#D9A544;">1</span>
+                <span style="font:400 11.5px/1.5 'Jost',sans-serif;color:#C6D6E2;">CONSUMABLES — fuel bar with amber caution tick at 25%; thrust as 10-segment ladder, amber = live burn.</span>
+              </div>
+              <div style="display:flex;gap:9px;align-items:flex-start;">
+                <span style="flex:none;width:18px;height:18px;border:1px solid #D9A544;border-radius:50%;display:flex;align-items:center;justify-content:center;font:600 10px 'IBM Plex Mono',monospace;color:#D9A544;">2</span>
+                <span style="font:400 11.5px/1.5 'Jost',sans-serif;color:#C6D6E2;">CLOCK &amp; SCORE — gold = currency, everywhere. Tabular mono so digits never jitter.</span>
+              </div>
+              <div style="display:flex;gap:9px;align-items:flex-start;">
+                <span style="flex:none;width:18px;height:18px;border:1px solid #D9A544;border-radius:50%;display:flex;align-items:center;justify-content:center;font:600 10px 'IBM Plex Mono',monospace;color:#D9A544;">3</span>
+                <span style="font:400 11.5px/1.5 'Jost',sans-serif;color:#C6D6E2;">TELEMETRY — per-channel limit chips; master annunciator goes teal GO only when every channel passes.</span>
+              </div>
+              <div style="display:flex;gap:9px;align-items:flex-start;">
+                <span style="flex:none;width:18px;height:18px;border:1px solid #D9A544;border-radius:50%;display:flex;align-items:center;justify-content:center;font:600 10px 'IBM Plex Mono',monospace;color:#D9A544;">4</span>
+                <span style="font:400 11.5px/1.5 'Jost',sans-serif;color:#C6D6E2;">PREDICTED PATH — dotted ballistic arc + impact crosshair. Vellum = advisory, never a signal color.</span>
+              </div>
+              <div style="display:flex;gap:9px;align-items:flex-start;">
+                <span style="flex:none;width:18px;height:18px;border:1px solid #D9A544;border-radius:50%;display:flex;align-items:center;justify-content:center;font:600 10px 'IBM Plex Mono',monospace;color:#D9A544;">5</span>
+                <span style="font:400 11.5px/1.5 'Jost',sans-serif;color:#C6D6E2;">PAD MARKINGS — teal beacons + chevrons = landable; gold pennant + ×3 = bonus.</span>
+              </div>
+            </div>
+
+            <div style="display:flex;align-items:center;gap:18px;border:1px dashed #2C4E6B;padding:14px 18px;margin-top:16px;flex-wrap:wrap;">
+              <span style="font:600 11px 'Jost',sans-serif;letter-spacing:.18em;color:#8FB0C9;">CHIP LOGIC</span>
+              <span style="font:600 12px 'IBM Plex Mono',monospace;color:#2FE6A6;border:1px solid #2FE6A6;background:rgba(47,230,166,.12);padding:4px 10px;">● GO — ≤ 80% OF LIMIT</span>
+              <span style="font:600 12px 'IBM Plex Mono',monospace;color:#FFB020;border:1px solid #FFB020;background:rgba(255,176,32,.12);padding:4px 10px;">▲ CAUTION — 80–100%</span>
+              <span style="font:600 12px 'IBM Plex Mono',monospace;color:#FF4D5E;border:1px solid #FF4D5E;background:rgba(255,77,94,.13);padding:4px 10px;">✕ EXCEED — OVER LIMIT</span>
+              <span style="font:400 11.5px 'Jost',sans-serif;color:#8FB0C9;">Glyph + word + color — survivability is never encoded in hue alone.</span>
+            </div>
+          </div>
+
+          <div>
+            <div style="display:flex;align-items:baseline;gap:12px;border-bottom:1px solid #2C4E6B;padding-bottom:8px;margin-bottom:18px;">
+              <span style="font:600 11px 'IBM Plex Mono',monospace;color:#D9A544;">S-07</span>
+              <span style="font:600 13px 'Jost',sans-serif;letter-spacing:.22em;">TERMINAL SCREENS</span>
+            </div>
+            <div style="display:flex;gap:40px;">
+              <div data-screen-label="1a — Landing success screen" style="position:relative;width:620px;height:400px;border:1px solid #2C4E6B;overflow:hidden;background:linear-gradient(180deg,#081420,#0E2133 70%);">
+                <svg viewBox="0 0 620 400" style="position:absolute;inset:0;width:100%;height:100%;">
+                  <rect width="620" height="400" fill="url(#fm-grid)"/>
+                  <circle cx="80" cy="60" r="1.1" fill="#E9F2F9" opacity="0.4"/>
+                  <circle cx="240" cy="40" r="0.9" fill="#E9F2F9" opacity="0.3"/>
+                  <circle cx="420" cy="70" r="1.2" fill="#E9F2F9" opacity="0.45"/>
+                  <circle cx="540" cy="45" r="0.8" fill="#E9F2F9" opacity="0.3"/>
+                  <polygon fill="#050B12" points="0,310 80,278 160,316 240,296 380,296 460,310 540,280 620,306 620,400 0,400"/>
+                  <polygon fill="url(#fm-hatch)" points="0,310 80,278 160,316 240,296 380,296 460,310 540,280 620,306 620,400 0,400"/>
+                  <polyline points="0,310 80,278 160,316 240,296 380,296 460,310 540,280 620,306" fill="none" stroke="#E9F2F9" stroke-width="2"/>
+                  <line x1="240" y1="296" x2="380" y2="296" stroke="#2FE6A6" stroke-width="3.5"/>
+                  <circle cx="244" cy="290" r="3" fill="#2FE6A6"/>
+                  <circle cx="376" cy="290" r="3" fill="#2FE6A6"/>
+                  <g transform="translate(310,273) scale(0.9)"><use href="#fm-craft"></use><use href="#fm-ring"></use></g>
+                </svg>
+                <div style="position:absolute;left:50%;top:34px;transform:translateX(-50%);width:400px;background:rgba(6,16,27,0.93);border:1.5px solid #2FE6A6;box-shadow:inset 0 0 0 4px rgba(6,16,27,1), inset 0 0 0 5px rgba(47,230,166,.5);padding:20px 24px;">
+                  <div style="position:absolute;right:14px;top:12px;border:1.5px solid #2FE6A6;color:#2FE6A6;font:600 10.5px 'IBM Plex Mono',monospace;letter-spacing:.14em;padding:3px 8px;transform:rotate(-7deg);opacity:.85;">NOMINAL</div>
+                  <div style="font:700 19px 'Jost',sans-serif;letter-spacing:.14em;color:#2FE6A6;">TOUCHDOWN CONFIRMED</div>
+                  <div style="font:400 11px 'IBM Plex Mono',monospace;color:#8FB0C9;margin:3px 0 14px;">SITE: MARE SERENITATIS · PAD 2 · T+ 01:58</div>
+                  <div style="display:grid;grid-template-columns:1fr auto auto;gap:5px 14px;font:500 13px 'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums;">
+                    <span style="color:#8FB0C9;">V/S AT CONTACT</span><span style="text-align:right;">1.8 M/S</span><span style="color:#2FE6A6;">● PASS</span>
+                    <span style="color:#8FB0C9;">TILT AT CONTACT</span><span style="text-align:right;">2.6°</span><span style="color:#2FE6A6;">● PASS</span>
+                    <span style="color:#8FB0C9;">FUEL REMAINING</span><span style="text-align:right;">27%</span><span style="color:#8FB0C9;">→ BONUS</span>
+                  </div>
+                  <div style="height:1px;background:#2C4E6B;margin:13px 0;"></div>
+                  <div style="display:grid;grid-template-columns:1fr auto;gap:5px 14px;font:500 13px 'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums;">
+                    <span style="color:#8FB0C9;">BASE LANDING</span><span style="text-align:right;">1 000</span>
+                    <span style="color:#8FB0C9;">PAD MULTIPLIER ×3</span><span style="text-align:right;">3 000</span>
+                    <span style="color:#8FB0C9;">FUEL BONUS 27% × 20</span><span style="text-align:right;">+ 540</span>
+                    <span style="color:#D9A544;font-weight:600;">TOTAL</span><span style="text-align:right;color:#D9A544;font-weight:600;font-size:16px;">3 540</span>
+                  </div>
+                  <div style="font:500 11px 'Jost',sans-serif;letter-spacing:.16em;color:#8FB0C9;margin-top:14px;">ENTER — NEXT SITE&nbsp;&nbsp;·&nbsp;&nbsp;R — RE-FLY</div>
+                </div>
+              </div>
+
+              <div data-screen-label="1a — Crash / game-over screen" style="position:relative;width:620px;height:400px;border:1px solid #2C4E6B;overflow:hidden;background:linear-gradient(180deg,#081420,#0E2133 70%);">
+                <svg viewBox="0 0 620 400" style="position:absolute;inset:0;width:100%;height:100%;">
+                  <rect width="620" height="400" fill="url(#fm-grid)"/>
+                  <circle cx="100" cy="50" r="1.1" fill="#E9F2F9" opacity="0.4"/>
+                  <circle cx="300" cy="36" r="0.9" fill="#E9F2F9" opacity="0.3"/>
+                  <circle cx="480" cy="64" r="1.2" fill="#E9F2F9" opacity="0.45"/>
+                  <polygon fill="#050B12" points="0,300 90,270 170,312 250,292 390,292 470,308 550,278 620,300 620,400 0,400"/>
+                  <polygon fill="url(#fm-hatch)" points="0,300 90,270 170,312 250,292 390,292 470,308 550,278 620,300 620,400 0,400"/>
+                  <polyline points="0,300 90,270 170,312 250,292 390,292 470,308 550,278 620,300" fill="none" stroke="#E9F2F9" stroke-width="2"/>
+                  <line x1="250" y1="292" x2="390" y2="292" stroke="#2FE6A6" stroke-width="3.5" opacity="0.5"/>
+                  <g transform="translate(320,268) scale(0.9)"><use href="#fm-debris"></use></g>
+                </svg>
+                <div style="position:absolute;left:50%;top:34px;transform:translateX(-50%);width:400px;background:rgba(6,16,27,0.93);border:1.5px solid #FF4D5E;box-shadow:inset 0 0 0 4px rgba(6,16,27,1), inset 0 0 0 5px rgba(255,77,94,.5);padding:20px 24px;">
+                  <div style="position:absolute;right:14px;top:12px;border:1.5px solid #FF4D5E;color:#FF4D5E;font:600 10.5px 'IBM Plex Mono',monospace;letter-spacing:.14em;padding:3px 8px;transform:rotate(-7deg);opacity:.85;">MISHAP RPT</div>
+                  <div style="font:700 19px 'Jost',sans-serif;letter-spacing:.14em;color:#FF4D5E;">VEHICLE LOST</div>
+                  <div style="font:400 11px 'IBM Plex Mono',monospace;color:#8FB0C9;margin:3px 0 14px;">TELEMETRY ENDS T+ 01:22 · SITE: MARE SERENITATIS</div>
+                  <div style="display:grid;grid-template-columns:1fr auto auto;gap:5px 14px;font:500 13px 'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums;">
+                    <span style="color:#8FB0C9;">IMPACT VELOCITY</span><span style="text-align:right;color:#FF4D5E;">6.4 M/S</span><span style="color:#FF4D5E;">✕ MAX 2.5</span>
+                    <span style="color:#8FB0C9;">TILT AT IMPACT</span><span style="text-align:right;color:#FF4D5E;">21°</span><span style="color:#FF4D5E;">✕ MAX 8°</span>
+                    <span style="color:#8FB0C9;">CAUSE</span><span style="text-align:right;grid-column:span 2;">EXCESS SINK RATE</span>
+                  </div>
+                  <div style="height:1px;background:#2C4E6B;margin:13px 0;"></div>
+                  <div style="display:grid;grid-template-columns:1fr auto;gap:5px 14px;font:500 13px 'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums;">
+                    <span style="color:#8FB0C9;">SCORE RETAINED</span><span style="text-align:right;">3 250</span>
+                    <span style="color:#8FB0C9;">CRAFT REMAINING</span><span style="text-align:right;">2</span>
+                  </div>
+                  <div style="font:500 11px 'Jost',sans-serif;letter-spacing:.16em;color:#8FB0C9;margin-top:14px;">R — RE-FLY&nbsp;&nbsp;·&nbsp;&nbsp;TAB — SITE MAP</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <div style="display:flex;align-items:baseline;gap:12px;border-bottom:1px solid #2C4E6B;padding-bottom:8px;margin-bottom:18px;">
+              <span style="font:600 11px 'IBM Plex Mono',monospace;color:#D9A544;">S-08</span>
+              <span style="font:600 13px 'Jost',sans-serif;letter-spacing:.22em;">TYPOGRAPHY &amp; ICONOGRAPHY</span>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;">
+              <div style="border:1px solid #2C4E6B;background:rgba(8,20,32,.55);padding:18px 20px;">
+                <div style="font:600 10px 'IBM Plex Mono',monospace;letter-spacing:.2em;color:#D9A544;margin-bottom:12px;">TYPE-01 · JOST — LABELS &amp; HEADERS</div>
+                <div style="font:700 26px 'Jost',sans-serif;letter-spacing:.12em;">TOUCHDOWN</div>
+                <div style="font:600 13px 'Jost',sans-serif;letter-spacing:.22em;color:#C6D6E2;margin-top:8px;">PANEL LABEL 13/600 +.22EM</div>
+                <div style="font:600 11px 'Jost',sans-serif;letter-spacing:.18em;color:#8FB0C9;margin-top:6px;">HUD LABEL 11/600 +.18EM</div>
+                <div style="font:400 13.5px/1.55 'Jost',sans-serif;color:#C6D6E2;margin-top:10px;">Body &amp; captions 13.5/400. Geometric, Futura-blooded — the voice of the panel placard.</div>
+              </div>
+              <div style="border:1px solid #2C4E6B;background:rgba(8,20,32,.55);padding:18px 20px;">
+                <div style="font:600 10px 'IBM Plex Mono',monospace;letter-spacing:.2em;color:#D9A544;margin-bottom:12px;">TYPE-02 · IBM PLEX MONO — TELEMETRY</div>
+                <div style="font:600 28px 'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums;">0123456789</div>
+                <div style="font:600 20px 'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums;color:#C6D6E2;margin-top:6px;">-3.4 M/S · 128 M · ×3</div>
+                <div style="font:400 13.5px/1.55 'Jost',sans-serif;color:#C6D6E2;margin-top:10px;">Every moving numeral: 600 weight, tabular-nums, 20–24 px in HUD, 13 px in stat tables. Digits never reflow — a twitching gauge must not twitch sideways.</div>
+              </div>
+              <div style="border:1px solid #2C4E6B;background:rgba(8,20,32,.55);padding:18px 20px;">
+                <div style="font:600 10px 'IBM Plex Mono',monospace;letter-spacing:.2em;color:#D9A544;margin-bottom:14px;">ICON-01 · INSTRUMENT GLYPHS</div>
+                <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px 8px;">
+                  <div style="display:flex;flex-direction:column;align-items:center;gap:5px;">
+                    <svg viewBox="0 0 24 24" style="width:26px;height:26px;"><rect x="6" y="4" width="12" height="16" fill="none" stroke="#E9F2F9" stroke-width="2"/><line x1="6" y1="13" x2="18" y2="13" stroke="#E9F2F9" stroke-width="2"/></svg>
+                    <span style="font:400 9.5px 'IBM Plex Mono',monospace;color:#8FB0C9;">FUEL</span>
+                  </div>
+                  <div style="display:flex;flex-direction:column;align-items:center;gap:5px;">
+                    <svg viewBox="0 0 24 24" style="width:26px;height:26px;"><polygon points="12,4 19,20 5,20" fill="none" stroke="#E9F2F9" stroke-width="2"/></svg>
+                    <span style="font:400 9.5px 'IBM Plex Mono',monospace;color:#8FB0C9;">THRUST</span>
+                  </div>
+                  <div style="display:flex;flex-direction:column;align-items:center;gap:5px;">
+                    <svg viewBox="0 0 24 24" style="width:26px;height:26px;"><line x1="12" y1="4" x2="12" y2="15" stroke="#E9F2F9" stroke-width="2"/><polyline points="7,11 12,17 17,11" fill="none" stroke="#E9F2F9" stroke-width="2"/></svg>
+                    <span style="font:400 9.5px 'IBM Plex Mono',monospace;color:#8FB0C9;">V/S</span>
+                  </div>
+                  <div style="display:flex;flex-direction:column;align-items:center;gap:5px;">
+                    <svg viewBox="0 0 24 24" style="width:26px;height:26px;"><line x1="4" y1="12" x2="15" y2="12" stroke="#E9F2F9" stroke-width="2"/><polyline points="11,7 17,12 11,17" fill="none" stroke="#E9F2F9" stroke-width="2"/></svg>
+                    <span style="font:400 9.5px 'IBM Plex Mono',monospace;color:#8FB0C9;">H/S</span>
+                  </div>
+                  <div style="display:flex;flex-direction:column;align-items:center;gap:5px;">
+                    <svg viewBox="0 0 24 24" style="width:26px;height:26px;"><circle cx="12" cy="13" r="7" fill="none" stroke="#E9F2F9" stroke-width="2"/><line x1="12" y1="13" x2="17" y2="8" stroke="#E9F2F9" stroke-width="2"/><line x1="12" y1="3" x2="12" y2="6" stroke="#E9F2F9" stroke-width="2"/></svg>
+                    <span style="font:400 9.5px 'IBM Plex Mono',monospace;color:#8FB0C9;">TILT</span>
+                  </div>
+                  <div style="display:flex;flex-direction:column;align-items:center;gap:5px;">
+                    <svg viewBox="0 0 24 24" style="width:26px;height:26px;"><polygon points="12,4 21,20 3,20" fill="none" stroke="#FFB020" stroke-width="2"/><line x1="12" y1="10" x2="12" y2="15" stroke="#FFB020" stroke-width="2"/><circle cx="12" cy="17.6" r="1" fill="#FFB020"/></svg>
+                    <span style="font:400 9.5px 'IBM Plex Mono',monospace;color:#8FB0C9;">CAUTION</span>
+                  </div>
+                  <div style="display:flex;flex-direction:column;align-items:center;gap:5px;">
+                    <svg viewBox="0 0 24 24" style="width:26px;height:26px;"><polygon points="8.5,4 15.5,4 20,8.5 20,15.5 15.5,20 8.5,20 4,15.5 4,8.5" fill="none" stroke="#FF4D5E" stroke-width="2"/><line x1="9" y1="9" x2="15" y2="15" stroke="#FF4D5E" stroke-width="2"/><line x1="15" y1="9" x2="9" y2="15" stroke="#FF4D5E" stroke-width="2"/></svg>
+                    <span style="font:400 9.5px 'IBM Plex Mono',monospace;color:#8FB0C9;">ABORT</span>
+                  </div>
+                  <div style="display:flex;flex-direction:column;align-items:center;gap:5px;">
+                    <svg viewBox="0 0 24 24" style="width:26px;height:26px;"><circle cx="12" cy="12" r="8" fill="none" stroke="#2FE6A6" stroke-width="2"/><polyline points="8,12.5 11,15.5 16.5,9.5" fill="none" stroke="#2FE6A6" stroke-width="2"/></svg>
+                    <span style="font:400 9.5px 'IBM Plex Mono',monospace;color:#8FB0C9;">GO</span>
+                  </div>
+                </div>
+                <div style="font:400 11.5px/1.5 'Jost',sans-serif;color:#8FB0C9;margin-top:12px;">24 px grid, 2 px butt-cap strokes, pure geometry — the same pen that draws the craft. Signal states recolor the stroke, never the shape.</div>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <div style="display:flex;align-items:baseline;gap:12px;border-bottom:1px solid #2C4E6B;padding-bottom:8px;margin-bottom:18px;">
+              <span style="font:600 11px 'IBM Plex Mono',monospace;color:#D9A544;">S-09</span>
+              <span style="font:600 13px 'Jost',sans-serif;letter-spacing:.22em;">ACCESSIBILITY</span>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;font:400 12px/1.65 'Jost',sans-serif;color:#C6D6E2;">
+              <div style="border:1px solid #2C4E6B;padding:14px 16px;">
+                <div style="font:600 10px 'IBM Plex Mono',monospace;letter-spacing:.18em;color:#D9A544;margin-bottom:8px;">CONTRAST ON FIELD NAVY</div>
+                INK 14.4:1 · VELLUM 7.2:1 · GO TEAL 10.1:1 · AMBER 8.9:1 · ABORT RED 5.0:1 — red is used at ≥ 12 px, 600 weight, and always inside an outlined chip.
+              </div>
+              <div style="border:1px solid #2C4E6B;padding:14px 16px;">
+                <div style="font:600 10px 'IBM Plex Mono',monospace;letter-spacing:.18em;color:#D9A544;margin-bottom:8px;">HUE-INDEPENDENT STATES</div>
+                Teal/amber/red separate under deutan, protan and tritan simulation; every state also carries a glyph (● ▲ ✕), a word (GO / CAUTION / EXCEED), and a fixed position.
+              </div>
+              <div style="border:1px solid #2C4E6B;padding:14px 16px;">
+                <div style="font:600 10px 'IBM Plex Mono',monospace;letter-spacing:.18em;color:#D9A544;margin-bottom:8px;">READABILITY FLOOR</div>
+                Telemetry ≥ 20 px mono at 1280 wide; craft silhouette verified at 24 px; FX are decorative — nothing gameplay-critical lives only in particles.
+              </div>
+            </div>
+          </div>
+
+          <div style="display:grid;grid-template-columns:repeat(5,1fr);border:1px solid #2C4E6B;">
+            <div style="padding:10px 14px;border-right:1px solid #2C4E6B;"><span style="font:500 9px 'IBM Plex Mono',monospace;letter-spacing:.18em;color:#8FB0C9;">PROJECT</span><div style="font:600 11.5px 'Jost',sans-serif;letter-spacing:.1em;margin-top:3px;">MOON LANDER</div></div>
+            <div style="padding:10px 14px;border-right:1px solid #2C4E6B;"><span style="font:500 9px 'IBM Plex Mono',monospace;letter-spacing:.18em;color:#8FB0C9;">DOC</span><div style="font:600 11.5px 'Jost',sans-serif;letter-spacing:.1em;margin-top:3px;">VISUAL IDENTITY SPEC</div></div>
+            <div style="padding:10px 14px;border-right:1px solid #2C4E6B;"><span style="font:500 9px 'IBM Plex Mono',monospace;letter-spacing:.18em;color:#8FB0C9;">DIRECTION</span><div style="font:600 11.5px 'Jost',sans-serif;letter-spacing:.1em;margin-top:3px;">FLIGHT MANUAL — REC.</div></div>
+            <div style="padding:10px 14px;border-right:1px solid #2C4E6B;"><span style="font:500 9px 'IBM Plex Mono',monospace;letter-spacing:.18em;color:#8FB0C9;">ALTERNATE</span><div style="font:600 11.5px 'Jost',sans-serif;letter-spacing:.1em;margin-top:3px;">SEE <a class="dv-oid" href="#1b">1b</a></div></div>
+            <div style="padding:10px 14px;"><span style="font:500 9px 'IBM Plex Mono',monospace;letter-spacing:.18em;color:#8FB0C9;">REV</span><div style="font:600 11.5px 'Jost',sans-serif;letter-spacing:.1em;margin-top:3px;">A · 2026-07-10</div></div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <div class="dv-opt" id="1b" data-screen-label="1b — Terminator Line alternative">
+      <div class="dv-olabel"><a class="dv-oid" href="#1b">1b</a>ALTERNATIVE — “Terminator Line” · hard-sci-fi chiaroscuro</div>
+      <div class="dv-card" style="width:720px;">
+        <div style="padding:24px 28px;display:flex;flex-direction:column;gap:20px;">
+          <div>
+            <div style="font:500 10px 'IBM Plex Mono',monospace;letter-spacing:.28em;color:#8FB0C9;margin-bottom:6px;">ALTERNATE DIRECTION</div>
+            <div style="font:700 22px/1.1 'Jost',sans-serif;letter-spacing:.1em;">TERMINATOR LINE</div>
+            <div style="font:400 13px/1.65 'Jost',sans-serif;color:#C6D6E2;margin-top:10px;text-wrap:pretty;">
+              If <a class="dv-oid" href="#1a">1a</a> is the engineer’s view, this is the documentary one: the Moon at local dawn, sunlight raking at 2°, every ridge a hard white edge over pitch shadow. The craft is dark hardware — you track it by rim-light and retro-reflective decals. The same signal trio carries all judgment; everything else is monochrome.
+            </div>
+          </div>
+
+          <div data-screen-label="1b — Terminator Line mini mockup" style="position:relative;width:656px;height:369px;background:#04060A;border:1px solid #22282F;overflow:hidden;">
+            <svg viewBox="0 0 656 369" style="position:absolute;inset:0;width:100%;height:100%;">
+              <circle cx="60" cy="50" r="1" fill="#F4F7FA" opacity="0.5"/>
+              <circle cx="180" cy="90" r="0.8" fill="#F4F7FA" opacity="0.35"/>
+              <circle cx="300" cy="40" r="1.1" fill="#F4F7FA" opacity="0.55"/>
+              <circle cx="470" cy="80" r="0.8" fill="#F4F7FA" opacity="0.35"/>
+              <circle cx="580" cy="46" r="1" fill="#F4F7FA" opacity="0.5"/>
+              <circle cx="120" cy="150" r="0.8" fill="#F4F7FA" opacity="0.3"/>
+              <circle cx="520" cy="140" r="0.9" fill="#F4F7FA" opacity="0.4"/>
+              <circle cx="380" cy="110" r="0.7" fill="#F4F7FA" opacity="0.3"/>
+              <polygon fill="#10151B" points="0,250 90,215 150,265 230,285 360,285 430,240 520,265 590,215 656,255 656,369 0,369"/>
+              <line x1="0" y1="250" x2="90" y2="215" stroke="#E8E2D6" stroke-width="2.5"/>
+              <line x1="90" y1="215" x2="150" y2="265" stroke="#333B45" stroke-width="1.5"/>
+              <line x1="150" y1="265" x2="230" y2="285" stroke="#8A94A0" stroke-width="1.5"/>
+              <line x1="230" y1="285" x2="360" y2="285" stroke="#E8E2D6" stroke-width="2.5"/>
+              <line x1="360" y1="285" x2="430" y2="240" stroke="#E8E2D6" stroke-width="2.5"/>
+              <line x1="430" y1="240" x2="520" y2="265" stroke="#333B45" stroke-width="1.5"/>
+              <line x1="520" y1="265" x2="590" y2="215" stroke="#E8E2D6" stroke-width="2.5"/>
+              <line x1="590" y1="215" x2="656" y2="255" stroke="#333B45" stroke-width="1.5"/>
+              <line x1="248" y1="285" x2="342" y2="285" stroke="#2FE6A6" stroke-width="3"/>
+              <circle cx="251" cy="279" r="2.5" fill="#2FE6A6"/>
+              <circle cx="339" cy="279" r="2.5" fill="#2FE6A6"/>
+              <text x="295" y="305" text-anchor="middle" fill="#8A94A0" style="font:500 10px 'IBM Plex Mono',monospace;">PAD 1</text>
+              <g transform="translate(400,140) rotate(-5)">
+                <polygon points="-11,-30 11,-30 16,-23 16,-13 11,-8 -11,-8 -16,-13 -16,-23" fill="#232A33" stroke="#98A4B3" stroke-width="1.5"/>
+                <circle cx="6" cy="-19" r="3.5" fill="#FFD9A8" opacity="0.9"/>
+                <polygon points="-18,-8 18,-8 13,7 -13,7" fill="#1A2028" stroke="#98A4B3" stroke-width="1.5"/>
+                <polyline points="-16,-23 -16,-13 -11,-8 -18,-8 -13,7" fill="none" stroke="#F4F7FA" stroke-width="2"/>
+                <rect x="-7" y="-4" width="8" height="4" fill="#F4F7FA"/>
+                <polygon points="-5,7 5,7 8,15 -8,15" fill="#10151B" stroke="#98A4B3" stroke-width="1.5"/>
+                <line x1="-12" y1="0" x2="-24" y2="20" stroke="#98A4B3" stroke-width="1.5"/>
+                <line x1="12" y1="0" x2="24" y2="20" stroke="#98A4B3" stroke-width="1.5"/>
+                <line x1="-28" y1="21" x2="-20" y2="21" stroke="#F4F7FA" stroke-width="2.5"/>
+                <line x1="20" y1="21" x2="28" y2="21" stroke="#98A4B3" stroke-width="2.5"/>
+                <polygon points="-6,16 6,16 0,38" fill="#9CC7FF" opacity="0.4"/>
+                <polygon points="-4,16 4,16 0,30" fill="#E8F3FF" opacity="0.9"/>
+              </g>
+              <line x1="400" y1="170" x2="330" y2="270" stroke="#5A646F" stroke-width="1" stroke-dasharray="1 6"/>
+            </svg>
+            <div style="position:absolute;left:14px;top:12px;font:500 11px 'IBM Plex Mono',monospace;color:#C9D4DF;letter-spacing:.06em;">FUEL 41&nbsp;&nbsp;THR 70%</div>
+            <div style="position:absolute;right:14px;top:12px;font:500 11px 'IBM Plex Mono',monospace;color:#C9D4DF;letter-spacing:.06em;">ALT 96&nbsp;&nbsp;V/S -2.1 <span style="color:#2FE6A6;">● GO</span></div>
+          </div>
+
+          <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:10px;">
+            <div>
+              <div style="height:40px;background:#04060A;border:1px solid rgba(244,247,250,.2);"></div>
+              <div style="font:600 10px 'Jost',sans-serif;letter-spacing:.08em;margin-top:5px;">VOID</div>
+              <div style="font:400 9.5px 'IBM Plex Mono',monospace;color:#8FB0C9;">#04060A</div>
+            </div>
+            <div>
+              <div style="height:40px;background:#E8E2D6;"></div>
+              <div style="font:600 10px 'Jost',sans-serif;letter-spacing:.08em;margin-top:5px;">SUNLIT REGOLITH</div>
+              <div style="font:400 9.5px 'IBM Plex Mono',monospace;color:#8FB0C9;">#E8E2D6</div>
+            </div>
+            <div>
+              <div style="height:40px;background:#1B222B;"></div>
+              <div style="font:600 10px 'Jost',sans-serif;letter-spacing:.08em;margin-top:5px;">SHADOW BASALT</div>
+              <div style="font:400 9.5px 'IBM Plex Mono',monospace;color:#8FB0C9;">#1B222B</div>
+            </div>
+            <div>
+              <div style="height:40px;background:#2B323B;"></div>
+              <div style="font:600 10px 'Jost',sans-serif;letter-spacing:.08em;margin-top:5px;">HULL GUNMETAL</div>
+              <div style="font:400 9.5px 'IBM Plex Mono',monospace;color:#8FB0C9;">#2B323B</div>
+            </div>
+            <div>
+              <div style="height:40px;background:#F4F7FA;"></div>
+              <div style="font:600 10px 'Jost',sans-serif;letter-spacing:.08em;margin-top:5px;">RIM WHITE</div>
+              <div style="font:400 9.5px 'IBM Plex Mono',monospace;color:#8FB0C9;">#F4F7FA</div>
+            </div>
+            <div>
+              <div style="height:40px;background:#CFE4FF;"></div>
+              <div style="font:600 10px 'Jost',sans-serif;letter-spacing:.08em;margin-top:5px;">CRYO FLAME</div>
+              <div style="font:400 9.5px 'IBM Plex Mono',monospace;color:#8FB0C9;">#CFE4FF</div>
+            </div>
+          </div>
+
+          <div style="font:400 12px/1.65 'Jost',sans-serif;color:#C6D6E2;border-top:1px solid #2C4E6B;padding-top:14px;">
+            Signals (Go Teal / Caution Amber / Abort Red) and the type system are shared with <a class="dv-oid" href="#1a">1a</a> — accessibility guarantees carry over.
+            <span style="color:#8FB0C9;">Choose this for cinematic dread over diagrammatic clarity; cost: silhouettes read ~20% worse at small sprite sizes and FX must carry more of the feedback.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <p class="dv-next">Try next: “develop <a class="dv-oid" href="#1b">1b</a> to a full spec” · “animate the hero mockup in <a class="dv-oid" href="#1a">1a</a>” · “turn <a class="dv-oid" href="#1a">1a</a> into a playable prototype”.</p>
+</section>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{
+  &quot;animateHero&quot;: {&quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: true, &quot;tsType&quot;: &quot;boolean&quot;, &quot;section&quot;: &quot;Hero mockup (1a)&quot;},
+  &quot;showGrid&quot;: {&quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: true, &quot;tsType&quot;: &quot;boolean&quot;, &quot;section&quot;: &quot;Hero mockup (1a)&quot;}
+}">
+class Component extends DCLogic {
+  state = { tick: 0 };
+
+  componentDidMount() {
+    this.sim = { t: 4.2, fuel: 43.5, score: 3250, bonusGiven: false, bonusT: 0 };
+    this._last = performance.now();
+    this._acc = 0;
+    const loop = (now) => {
+      this._raf = requestAnimationFrame(loop);
+      const dt = Math.min((now - this._last) / 1000, 0.05);
+      this._last = now;
+      if (!(this.props.animateHero ?? true)) return;
+      const s = this.sim;
+      s.t += dt;
+      if (s.t >= 13.2) { s.t = 0; s.fuel = 47; s.score = 3250; s.bonusGiven = false; }
+      const f = this.heroFrame(s.t);
+      if (f.thr > 0) s.fuel = Math.max(0, s.fuel - f.thr * 2.4 * dt);
+      if (f.landed) {
+        if (!s.bonusGiven) { s.bonusGiven = true; s.bonusT = s.t; }
+        const k = Math.min(1, (s.t - s.bonusT) / 1.1);
+        s.score = 3250 + Math.round((1000 + Math.round(s.fuel) * 20) * k);
+      }
+      this._acc += dt;
+      if (this._acc >= 1 / 30) { this._acc = 0; this.setState({ tick: this.state.tick + 1 }); }
+    };
+    this._raf = requestAnimationFrame(loop);
+  }
+
+  componentWillUnmount() { cancelAnimationFrame(this._raf); }
+
+  heroFrame(t) {
+    const K = [
+      { t: 0,    x: 940, y: 150, r: -18, thr: 0,    alt: 165, vs: -4.6, hs: -2.6 },
+      { t: 2.2,  x: 845, y: 205, r: -14, thr: 0.55, alt: 150, vs: -4.2, hs: -2.2 },
+      { t: 5,    x: 660, y: 300, r: -8,  thr: 0.8,  alt: 128, vs: -3.4, hs: -1.4 },
+      { t: 8,    x: 495, y: 402, r: -4,  thr: 0.7,  alt: 74,  vs: -2.6, hs: -0.6 },
+      { t: 10.5, x: 436, y: 478, r: -1,  thr: 0.62, alt: 22,  vs: -1.6, hs: -0.2 },
+      { t: 11.6, x: 432, y: 506, r: 0,   thr: 0.45, alt: 0,   vs: -0.9, hs: 0 },
+      { t: 11.8, x: 432, y: 506, r: 0,   thr: 0,    alt: 0,   vs: 0,    hs: 0 },
+      { t: 13.2, x: 432, y: 506, r: 0,   thr: 0,    alt: 0,   vs: 0,    hs: 0 }
+    ];
+    let i = 0;
+    while (i < K.length - 2 && t >= K[i + 1].t) i++;
+    const a = K[i], b = K[i + 1];
+    let u = (t - a.t) / (b.t - a.t);
+    u = Math.max(0, Math.min(1, u));
+    u = u * u * (3 - 2 * u);
+    const L = (p, q) => p + (q - p) * u;
+    return {
+      x: L(a.x, b.x), y: L(a.y, b.y), r: L(a.r, b.r), thr: L(a.thr, b.thr),
+      alt: L(a.alt, b.alt), vs: L(a.vs, b.vs), hs: L(a.hs, b.hs),
+      landed: t >= 11.6
+    };
+  }
+
+  chip(v, lim) {
+    const a = Math.abs(v) / lim;
+    if (a > 1) return { c: '#FF4D5E', bg: 'rgba(255,77,94,.13)', g: '✕', s: 2 };
+    if (a > 0.8) return { c: '#FFB020', bg: 'rgba(255,176,32,.12)', g: '▲', s: 1 };
+    return { c: '#2FE6A6', bg: 'rgba(47,230,166,.12)', g: '●', s: 0 };
+  }
+
+  renderVals() {
+    const animate = this.props.animateHero ?? true;
+    let f, fuel, score, clock;
+    if (animate && this.sim) {
+      f = this.heroFrame(this.sim.t);
+      fuel = this.sim.fuel;
+      score = this.sim.score;
+      clock = 42 + this.sim.t;
+    } else {
+      f = { x: 585, y: 275, r: -4, thr: 0.7, alt: 128, vs: -3.4, hs: 0.6, landed: false };
+      fuel = 41; score = 3250; clock = 47;
+    }
+    const vsChip = this.chip(f.vs, 2.5), hsChip = this.chip(f.hs, 1.5), tiltChip = this.chip(f.r, 8);
+    const worst = Math.max(vsChip.s, hsChip.s, tiltChip.s);
+    let annC, annBg, annT;
+    if (f.landed) { annC = '#2FE6A6'; annBg = 'rgba(47,230,166,.12)'; annT = '● TOUCHDOWN CONFIRMED'; }
+    else if (worst === 2) { annC = '#FF4D5E'; annBg = 'rgba(255,77,94,.14)'; annT = '✕ NO-GO — REDUCE SINK RATE'; }
+    else if (worst === 1) { annC = '#FFB020'; annBg = 'rgba(255,176,32,.12)'; annT = '▲ CAUTION — TIGHTEN APPROACH'; }
+    else { annC = '#2FE6A6'; annBg = 'rgba(47,230,166,.12)'; annT = '● GO FOR PAD 1'; }
+    const lit = Math.round(f.thr * 10);
+    const segs = [];
+    for (let i = 0; i < 10; i++) segs.push(i < lit ? { bc: '#FFB020', bg: '#FFB020' } : { bc: '#2C4E6B', bg: 'transparent' });
+    const fmt1 = (v) => (v > 0.05 ? '+' : v < -0.05 ? '-' : '') + Math.abs(v).toFixed(1);
+    const scoreStr = String(Math.max(0, Math.round(score))).padStart(5, '0');
+    const mm = String(Math.floor(clock / 60)).padStart(2, '0');
+    const ss = String(Math.floor(clock % 60)).padStart(2, '0');
+    const qx = (f.x + 436) / 2 - 30;
+    const qy = f.y + (532 - f.y) * 0.72;
+    return {
+      showGrid: this.props.showGrid ?? true,
+      heroFlying: !f.landed,
+      heroLanded: f.landed,
+      heroCraftT: 'translate(' + f.x.toFixed(1) + ',' + f.y.toFixed(1) + ') rotate(' + f.r.toFixed(1) + ') scale(1.35)',
+      heroFlameOn: f.thr > 0.03,
+      heroFlameT: 'translate(0,20) scale(1,' + (0.45 + f.thr * 0.75).toFixed(2) + ') translate(0,-20)',
+      heroPredD: 'M ' + f.x.toFixed(0) + ' ' + (f.y + 26).toFixed(0) + ' Q ' + qx.toFixed(0) + ' ' + qy.toFixed(0) + ' 440 532',
+      heroFuel: Math.round(fuel),
+      heroThr: Math.round(f.thr * 100),
+      heroThrColor: f.thr > 0.03 ? '#FFB020' : '#8FB0C9',
+      heroThrSegs: segs,
+      heroScore: scoreStr.slice(0, 2) + ' ' + scoreStr.slice(2),
+      heroClock: mm + ':' + ss,
+      heroAlt: Math.max(0, Math.round(f.alt)),
+      heroVs: fmt1(f.vs),
+      heroHs: fmt1(f.hs),
+      heroTilt: Math.round(Math.abs(f.r)),
+      heroVsValC: vsChip.s === 2 ? '#FF4D5E' : '#E9F2F9',
+      heroHsValC: hsChip.s === 2 ? '#FF4D5E' : '#E9F2F9',
+      heroTiltValC: tiltChip.s === 2 ? '#FF4D5E' : '#E9F2F9',
+      heroVsChip: vsChip, heroHsChip: hsChip, heroTiltChip: tiltChip,
+      heroAnnC: annC, heroAnnBg: annBg, heroAnnT: annT
+    };
+  }
+}
+</script>
+</body>
+</html>
