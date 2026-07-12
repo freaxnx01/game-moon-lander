@@ -60,13 +60,13 @@ a:hover{color:#D9A544;}
         <span style="font:400 10px 'IBM Plex Mono',monospace;color:#8FB0C9;text-align:right;">AGL</span>
         <span style="font:600 11px 'Jost',sans-serif;letter-spacing:.14em;color:#8FB0C9;">V/S</span>
         <span style="font:600 21px 'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums;text-align:right;color:{{ vsValC }};">{{ vs }} <span style="font-size:12px;color:#8FB0C9;">M/S</span></span>
-        <span style="font:600 10.5px 'IBM Plex Mono',monospace;color:{{ vsChip.c }};border:1px solid {{ vsChip.c }};background:{{ vsChip.bg }};padding:2px 6px;text-align:center;">{{ vsChip.g }} MAX 2.5</span>
+        <span style="font:600 10.5px 'IBM Plex Mono',monospace;color:{{ vsChip.c }};border:1px solid {{ vsChip.c }};background:{{ vsChip.bg }};padding:2px 6px;text-align:center;">{{ vsChip.g }} MAX {{ maxVs }}</span>
         <span style="font:600 11px 'Jost',sans-serif;letter-spacing:.14em;color:#8FB0C9;">H/S</span>
         <span style="font:600 21px 'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums;text-align:right;color:{{ hsValC }};">{{ hs }} <span style="font-size:12px;color:#8FB0C9;">M/S</span></span>
-        <span style="font:600 10.5px 'IBM Plex Mono',monospace;color:{{ hsChip.c }};border:1px solid {{ hsChip.c }};background:{{ hsChip.bg }};padding:2px 6px;text-align:center;">{{ hsChip.g }} MAX 1.5</span>
+        <span style="font:600 10.5px 'IBM Plex Mono',monospace;color:{{ hsChip.c }};border:1px solid {{ hsChip.c }};background:{{ hsChip.bg }};padding:2px 6px;text-align:center;">{{ hsChip.g }} MAX {{ maxHs }}</span>
         <span style="font:600 11px 'Jost',sans-serif;letter-spacing:.14em;color:#8FB0C9;">TILT</span>
         <span style="font:600 21px 'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums;text-align:right;color:{{ tiltValC }};">{{ tilt }}°</span>
-        <span style="font:600 10.5px 'IBM Plex Mono',monospace;color:{{ tiltChip.c }};border:1px solid {{ tiltChip.c }};background:{{ tiltChip.bg }};padding:2px 6px;text-align:center;">{{ tiltChip.g }} MAX 8°</span>
+        <span style="font:600 10.5px 'IBM Plex Mono',monospace;color:{{ tiltChip.c }};border:1px solid {{ tiltChip.c }};background:{{ tiltChip.bg }};padding:2px 6px;text-align:center;">{{ tiltChip.g }} MAX {{ maxTilt }}°</span>
       </div>
       <div style="margin-top:10px;border:1px solid {{ annC }};background:{{ annBg }};padding:6px 10px;text-align:center;font:600 12px 'IBM Plex Mono',monospace;letter-spacing:.12em;color:{{ annC }};">{{ annT }}</div>
     </div>
@@ -83,8 +83,18 @@ a:hover{color:#D9A544;}
           <div style="font:500 10px 'IBM Plex Mono',monospace;letter-spacing:.28em;color:#8FB0C9;">FLIGHT MANUAL BUILD 0.1</div>
           <div style="font:700 34px 'Jost',sans-serif;letter-spacing:.12em;margin-top:6px;">MOON LANDER</div>
           <div style="font:400 12px 'IBM Plex Mono',monospace;color:#D9A544;margin-top:4px;">SITE: {{ siteName }} · PAD ×1 / PAD ×3</div>
-          <div style="border:1px dashed #2C4E6B;padding:10px 12px;margin-top:18px;font:400 11.5px/1.8 'IBM Plex Mono',monospace;color:#C6D6E2;text-align:left;">← → &nbsp;RCS ROTATE&nbsp;&nbsp;·&nbsp;&nbsp;TILT ≤ 8°<br>↑ / SPACE &nbsp;MAIN ENGINE&nbsp;&nbsp;·&nbsp;&nbsp;V/S ≤ 2.5 · H/S ≤ 1.5<br>LAND ON A TEAL OR GOLD PAD — ANYWHERE ELSE IS ROCK</div>
-          <div style="font:600 12px 'IBM Plex Mono',monospace;letter-spacing:.18em;color:#2FE6A6;margin-top:18px;animation:ml-blink 1.4s infinite;">PRESS ANY KEY TO START</div>
+          <div style="border:1px dashed #2C4E6B;padding:10px 12px;margin-top:18px;font:400 11.5px/1.8 'IBM Plex Mono',monospace;color:#C6D6E2;text-align:left;">← → &nbsp;RCS ROTATE&nbsp;&nbsp;·&nbsp;&nbsp;TILT ≤ {{ maxTilt }}°<br>↑ / SPACE &nbsp;MAIN ENGINE&nbsp;&nbsp;·&nbsp;&nbsp;V/S ≤ {{ maxVs }} · H/S ≤ {{ maxHs }}<br>LAND ON A TEAL OR GOLD PAD — ANYWHERE ELSE IS ROCK</div>
+          <div style="display:flex;gap:8px;margin-top:18px;">
+            <sc-for list="{{ diffList }}" as="d" hint-placeholder-count="3">
+              <div style="flex:1;border:1.5px solid {{ d.selBorder }};background:{{ d.selBg }};padding:9px 8px;text-align:center;">
+                <div style="font:700 13px 'Jost',sans-serif;letter-spacing:.1em;color:{{ d.selC }};">{{ d.label }}</div>
+                <div style="font:400 9.5px 'IBM Plex Mono',monospace;color:#8FB0C9;margin-top:5px;">{{ d.grav }}</div>
+                <div style="font:400 9.5px 'IBM Plex Mono',monospace;color:#8FB0C9;margin-top:2px;">{{ d.fuel }}</div>
+                <div style="font:400 9.5px 'IBM Plex Mono',monospace;color:#8FB0C9;margin-top:2px;">{{ d.gates }}</div>
+              </div>
+            </sc-for>
+          </div>
+          <div style="font:600 12px 'IBM Plex Mono',monospace;letter-spacing:.18em;color:#2FE6A6;margin-top:18px;animation:ml-blink 1.4s infinite;">◄ ► SELECT DIFFICULTY&nbsp;&nbsp;&nbsp;·&nbsp;&nbsp;&nbsp;ENTER — LAUNCH</div>
         </div>
       </div>
     </sc-if>
@@ -116,8 +126,8 @@ a:hover{color:#D9A544;}
         <div style="font:700 19px 'Jost',sans-serif;letter-spacing:.14em;color:#FF4D5E;">VEHICLE LOST</div>
         <div style="font:400 11px 'IBM Plex Mono',monospace;color:#8FB0C9;margin:3px 0 14px;">TELEMETRY ENDS T+ {{ crClock }} · SITE: {{ siteName }}</div>
         <div style="display:grid;grid-template-columns:1fr auto auto;gap:5px 14px;font:500 13px 'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums;">
-          <span style="color:#8FB0C9;">IMPACT VELOCITY</span><span style="text-align:right;color:#FF4D5E;">{{ crVs }} M/S</span><span style="color:#FF4D5E;">✕ MAX 2.5</span>
-          <span style="color:#8FB0C9;">TILT AT IMPACT</span><span style="text-align:right;color:{{ crTiltC }};">{{ crTilt }}°</span><span style="color:{{ crTiltC }};">MAX 8°</span>
+          <span style="color:#8FB0C9;">IMPACT VELOCITY</span><span style="text-align:right;color:#FF4D5E;">{{ crVs }} M/S</span><span style="color:#FF4D5E;">✕ MAX {{ maxVs }}</span>
+          <span style="color:#8FB0C9;">TILT AT IMPACT</span><span style="text-align:right;color:{{ crTiltC }};">{{ crTilt }}°</span><span style="color:{{ crTiltC }};">MAX {{ maxTilt }}°</span>
           <span style="color:#8FB0C9;">CAUSE</span><span style="text-align:right;grid-column:span 2;">{{ crCause }}</span>
         </div>
         <div style="height:1px;background:rgba(233,242,249,.15);margin:13px 0;"></div>
@@ -139,6 +149,12 @@ a:hover{color:#D9A544;}
   &quot;showPath&quot;: {&quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: true, &quot;tsType&quot;: &quot;boolean&quot;, &quot;section&quot;: &quot;Overlays&quot;},
   &quot;showGrid&quot;: {&quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: true, &quot;tsType&quot;: &quot;boolean&quot;, &quot;section&quot;: &quot;Overlays&quot;}
 }">
+const DIFF = {
+  cadet:     { key: 'cadet',     label: 'CADET',     gravity: 1.15, startFuel: 110, maxVs: 4.0, maxHs: 3.0, maxTilt: 15, startVx: 20 },
+  pilot:     { key: 'pilot',     label: 'PILOT',     gravity: 1.62, startFuel: 80,  maxVs: 3.0, maxHs: 2.0, maxTilt: 10, startVx: 42 },
+  commander: { key: 'commander', label: 'COMMANDER', gravity: 1.62, startFuel: 55,  maxVs: 2.5, maxHs: 1.5, maxTilt: 8,  startVx: 55 }
+};
+const DIFF_ORDER = ['cadet', 'pilot', 'commander'];
 class Component extends DCLogic {
   state = { tick: 0 };
   canvasRef = React.createRef();
@@ -148,7 +164,7 @@ class Component extends DCLogic {
   componentDidMount() {
     this.keys = {};
     this.scale = 1;
-    this.g = { score: 0, ships: 3, siteIndex: 1, seed: 7, phase: 'ready' };
+    this.g = { score: 0, ships: 3, siteIndex: 1, seed: 7, phase: 'ready', difficulty: 'pilot' };
     this.newSite(this.g.seed);
     this.onResize = () => { this.fit(); };
     window.addEventListener('resize', this.onResize);
@@ -190,7 +206,22 @@ class Component extends DCLogic {
     const nav = ['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', ' '];
     if (nav.includes(e.key)) e.preventDefault();
     const g = this.g;
-    if (g.phase === 'ready') { g.phase = 'flying'; return; }
+    if (g.phase === 'ready') {
+      if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+        const i = DIFF_ORDER.indexOf(g.difficulty);
+        const n = DIFF_ORDER.length;
+        const j = e.key === 'ArrowLeft' ? (i - 1 + n) % n : (i + 1) % n;
+        g.difficulty = DIFF_ORDER[j];
+        this.setState({ tick: this.state.tick + 1 });
+        return;
+      }
+      if (e.key === 'Enter' || e.key === ' ' || e.key === 'ArrowUp') {
+        this.resetCraft();
+        g.phase = 'flying';
+        return;
+      }
+      return;
+    }
     this.keys[e.key] = true;
     if ((e.key === 'r' || e.key === 'R') && (g.phase === 'landed' || g.phase === 'crashed') && g.ships > 0) {
       this.resetCraft();
@@ -201,7 +232,7 @@ class Component extends DCLogic {
         g.siteIndex += 1; g.seed = g.seed * 3 + 11;
         this.newSite(g.seed); this.resetCraft(); g.phase = 'flying';
       } else if (g.phase === 'crashed' && g.ships <= 0) {
-        this.g = { score: 0, ships: 3, siteIndex: 1, seed: 7, phase: 'ready' };
+        this.g = { score: 0, ships: 3, siteIndex: 1, seed: 7, phase: 'ready', difficulty: g.difficulty };
         this.newSite(this.g.seed);
       }
     }
@@ -247,7 +278,7 @@ class Component extends DCLogic {
   resetCraft() {
     const P = this.params();
     this.c = {
-      x: 180, y: 120, vx: 42, vy: 0, rot: 0, thr: 0,
+      x: 180, y: 120, vx: P.startVx, vy: 0, rot: 0, thr: 0,
       fuel: P.startFuel, t: 0, ring: 0
     };
     this.particles = [];
@@ -257,10 +288,15 @@ class Component extends DCLogic {
   }
 
   params() {
+    const d = DIFF[(this.g && this.g.difficulty) || 'pilot'];
     return {
-      gravity: this.props.gravity ?? 1.62,
+      gravity: d.gravity,
       engine: (this.props.enginePower ?? 1) * 4.4,
-      startFuel: this.props.startFuel ?? 60,
+      startFuel: d.startFuel,
+      maxVs: d.maxVs,
+      maxHs: d.maxHs,
+      maxTilt: d.maxTilt,
+      startVx: d.startVx,
       showPath: this.props.showPath ?? true,
       showGrid: this.props.showGrid ?? true
     };
@@ -336,7 +372,7 @@ class Component extends DCLogic {
     const tilt = Math.abs(c.rot);
     const pad = this.padAt(feet[0].x) && this.padAt(feet[1].x) &&
                 this.padAt(feet[0].x) === this.padAt(feet[1].x) ? this.padAt(c.x) : null;
-    const ok = pad && vs <= 2.5 && Math.abs(hs) <= 1.5 && tilt <= 8;
+    const ok = pad && vs <= P.maxVs && Math.abs(hs) <= P.maxHs && tilt <= P.maxTilt;
     if (ok) this.land(pad, vs, tilt);
     else this.crash(pad, vs, hs, tilt);
   }
@@ -354,13 +390,13 @@ class Component extends DCLogic {
   }
 
   crash(pad, vs, hs, tilt) {
-    const g = this.g, c = this.c;
+    const g = this.g, c = this.c, P = this.params();
     g.phase = 'crashed';
     g.ships -= 1;
     let cause = 'OFF-PAD IMPACT';
     if (pad) {
-      if (vs > 2.5) cause = 'EXCESS SINK RATE';
-      else if (Math.abs(hs) > 1.5) cause = 'EXCESS DRIFT';
+      if (vs > P.maxVs) cause = 'EXCESS SINK RATE';
+      else if (Math.abs(hs) > P.maxHs) cause = 'EXCESS DRIFT';
       else cause = 'EXCESS TILT';
     }
     this.crashInfo = { vs: Math.max(vs, 0), hs: hs, tilt: tilt, cause: cause, t: c.t };
@@ -406,21 +442,26 @@ class Component extends DCLogic {
       let px = c.x, py = c.y, pvx = c.vx, pvy = c.vy;
       const gpx = P.gravity * this.PXPM;
       ctx.fillStyle = 'rgba(143,176,201,0.9)';
-      let impact = null;
+      let impact = null, pvyImpact = 0;
       for (let i = 0; i < 240; i++) {
         pvy += gpx * 0.05; px += pvx * 0.05; py += pvy * 0.05;
         if (px < 0 || px > 1280 || py > 719) break;
-        if (py >= this.groundY(px)) { impact = { x: px, y: this.groundY(px) }; break; }
+        if (py >= this.groundY(px)) { impact = { x: px, y: this.groundY(px) }; pvyImpact = pvy; break; }
         if (i % 4 === 0) { ctx.beginPath(); ctx.arc(px, py, 1.4, 0, 6.3); ctx.fill(); }
       }
       if (impact) {
-        ctx.strokeStyle = '#2FE6A6'; ctx.lineWidth = 1.5;
+        const predVs = pvyImpact / this.PXPM;         // m/s, + = descending
+        const onPad = !!this.padAt(impact.x);
+        const col = predVs > P.maxVs ? '#FF4D5E' : (onPad ? '#2FE6A6' : '#FFB020');
+        ctx.strokeStyle = col; ctx.lineWidth = 1.5;
         ctx.beginPath(); ctx.arc(impact.x, impact.y, 4.5, 0, 6.3); ctx.stroke();
         ctx.lineWidth = 1;
         ctx.beginPath();
         ctx.moveTo(impact.x, impact.y - 9); ctx.lineTo(impact.x, impact.y + 9);
         ctx.moveTo(impact.x - 9, impact.y); ctx.lineTo(impact.x + 9, impact.y);
         ctx.stroke();
+        ctx.fillStyle = col; ctx.font = "500 12px 'IBM Plex Mono',monospace"; ctx.textAlign = 'left';
+        ctx.fillText('▼ ' + Math.abs(predVs).toFixed(1) + ' M/S', impact.x + 11, impact.y - 11);
       }
     }
 
@@ -582,7 +623,7 @@ class Component extends DCLogic {
     const vs = -c.vy / this.PXPM;
     const hs = c.vx / this.PXPM;
     const alt = this.groundY ? Math.max(0, (this.groundY(c.x) - c.y - 25 * 1.35) / this.PXPM * 3.8) : 0;
-    const vsChip = this.chip(vs, 2.5), hsChip = this.chip(hs, 1.5), tiltChip = this.chip(c.rot, 8);
+    const vsChip = this.chip(vs, P.maxVs), hsChip = this.chip(hs, P.maxHs), tiltChip = this.chip(c.rot, P.maxTilt);
     const worst = Math.max(vsChip.s, hsChip.s, tiltChip.s);
     let annC, annBg, annT;
     if (g.phase === 'landed') { annC = '#2FE6A6'; annBg = 'rgba(47,230,166,.12)'; annT = '● TOUCHDOWN CONFIRMED'; }
@@ -597,8 +638,26 @@ class Component extends DCLogic {
     const fmt1 = (v) => (v > 0.05 ? '+' : v < -0.05 ? '-' : '') + Math.abs(v).toFixed(1);
     const fmtScore = (n) => { const s = String(Math.max(0, Math.round(n))).padStart(5, '0'); return s.slice(0, s.length - 3) + ' ' + s.slice(-3); };
     const fmtClock = (t) => String(Math.floor(t / 60)).padStart(2, '0') + ':' + String(Math.floor(t % 60)).padStart(2, '0');
+    const curDiff = (this.g && this.g.difficulty) || 'pilot';
+    const diffList = DIFF_ORDER.map(k => {
+      const d = DIFF[k], sel = k === curDiff;
+      return {
+        key: k,
+        label: d.label,
+        grav: d.gravity.toFixed(2) + ' m/s²',
+        fuel: 'FUEL ' + d.startFuel,
+        gates: 'V/S ' + d.maxVs.toFixed(1) + ' · H/S ' + d.maxHs.toFixed(1) + ' · ' + d.maxTilt + '°',
+        selBorder: sel ? '#2FE6A6' : '#2C4E6B',
+        selBg: sel ? 'rgba(47,230,166,.10)' : 'transparent',
+        selC: sel ? '#2FE6A6' : '#8FB0C9'
+      };
+    });
     const li = this.landInfo, ci = this.crashInfo;
     return {
+      diffList: diffList,
+      maxVs: P.maxVs.toFixed(1),
+      maxHs: P.maxHs.toFixed(1),
+      maxTilt: String(P.maxTilt),
       rootRef: this.rootRef,
       canvasRef: this.canvasRef,
       stageT: 'scale(' + (this.scale || 1).toFixed(3) + ')',
@@ -634,7 +693,7 @@ class Component extends DCLogic {
       crClock: ci ? fmtClock(ci.t) : '',
       crVs: ci ? Math.abs(ci.vs).toFixed(1) : '',
       crTilt: ci ? ci.tilt.toFixed(0) : '',
-      crTiltC: ci && ci.tilt > 8 ? '#FF4D5E' : '#E9F2F9',
+      crTiltC: ci && ci.tilt > P.maxTilt ? '#FF4D5E' : '#E9F2F9',
       crCause: ci ? ci.cause : '',
       crScore: fmtScore(g.score),
       crShips: g.ships,
