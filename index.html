@@ -623,7 +623,7 @@ class Component extends DCLogic {
     const P = this.params ? this.params() : { startFuel: 60 };
     const vs = -c.vy / this.PXPM;
     const hs = c.vx / this.PXPM;
-    const alt = this.groundY ? Math.max(0, (this.groundY(c.x) - c.y - 25 * 1.35) / this.PXPM * 3.8) : 0;
+    const alt = this.terrain ? Math.max(0, (this.groundY(c.x) - c.y - 25 * 1.35) / this.PXPM * 3.8) : 0;
     const vsChip = this.chip(vs, P.maxVs), hsChip = this.chip(hs, P.maxHs), tiltChip = this.chip(c.rot, P.maxTilt);
     const worst = Math.max(vsChip.s, hsChip.s, tiltChip.s);
     let annC, annBg, annT;
